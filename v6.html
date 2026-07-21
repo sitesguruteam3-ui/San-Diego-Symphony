@@ -1,0 +1,1535 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AMPLIFY - San Diego Symphony Gala</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <style>
+    @font-face {
+      font-family: "montserrat-itinerary";
+      src: url("montserrat-itinerary.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "montserrat-itinerary";
+      src: url("montserrat-itinerary.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: oblique 0deg 10deg;
+      font-display: swap;
+    }
+
+    :root {
+      --header-h: 76px;
+      --bg: #ffffff;
+      --ink: #0f172a;       /* slate-900 */
+      --text: #334155;      /* slate-700 */
+      --muted: #475569;     /* slate-600 */
+      --line: #e2e8f0;      /* slate-200 */
+      --soft: #f8fafc;      /* slate-50 */
+      --button: #334155;    /* slate-700 */
+      --gold: #b7792b;
+      --font: "montserrat-itinerary", Montserrat, Inter, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-weight: 300; /* Light weight by default matching WeTravel */
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+    img { display: block; max-width: 100%; }
+    body.drawer-open, body.intro-open { overflow: hidden; }
+
+    .cover-intro {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: grid;
+      place-items: end center;
+      padding: clamp(28px, 6vw, 72px);
+      overflow: hidden;
+      border: 0;
+      cursor: pointer;
+      color: #DEB73F;
+      background: #0b5963;
+      isolation: isolate;
+      transition: opacity 700ms ease, transform 850ms cubic-bezier(0.76, 0, 0.24, 1);
+    }
+    .cover-intro-image {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      animation: cover-drift 12s ease-in-out infinite alternate;
+    }
+    .cover-intro::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: linear-gradient(180deg, rgba(4, 32, 39, 0.04) 30%, rgba(4, 32, 39, 0.54) 100%);
+    }
+    .cover-loader {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      display: grid;
+      justify-items: center;
+      gap: 12px;
+      color: #DEB73F;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      z-index: 2;
+      transform: translate(-50%, -50%);
+      transition: opacity 300ms ease;
+    }
+    .cover-loader::before {
+      content: "";
+      width: 34px;
+      height: 34px;
+      border: 2px solid rgba(222, 183, 63, 0.28);
+      border-top-color: #DEB73F;
+      border-radius: 50%;
+      animation: cover-loader-spin 800ms linear infinite;
+    }
+    .cover-intro:not(.is-loading) .cover-loader { opacity: 0; pointer-events: none; }
+    .cover-intro.is-loading .cover-intro-content { opacity: 0; }
+    .cover-intro-content {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      justify-items: center;
+      gap: 12px;
+      text-shadow: 0 2px 16px rgba(0, 0, 0, 0.45);
+    }
+    .cover-intro.is-ready .cover-intro-content {
+      animation: cover-enter 900ms both cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .cover-intro-kicker {
+      margin: 0;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+    }
+    .cover-intro-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0;
+      padding: 12px 26px;
+      border: 1px solid rgba(222, 183, 63, 0.78);
+      border-radius: 999px;
+      background: rgba(4, 32, 39, 0.3);
+      box-shadow: 0 0 24px rgba(222, 183, 63, 0.2);
+      font-size: clamp(1rem, 1.6vw, 1.3rem);
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .cover-intro-action::after {
+      content: "";
+      width: 40px;
+      height: 1px;
+      background: currentColor;
+      animation: cover-pulse 1.8s ease-in-out infinite;
+    }
+    .cover-intro.is-opening {
+      opacity: 0;
+      transform: scale(1.04);
+      pointer-events: none;
+    }
+    @keyframes cover-enter { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes cover-drift { from { transform: scale(1); } to { transform: scale(1.035); } }
+    @keyframes cover-pulse { 50% { transform: scaleX(1.45); opacity: 0.55; } }
+    @keyframes cover-loader-spin { to { transform: rotate(360deg); } }
+    body:not(.site-revealed) .topbar,
+    body:not(.site-revealed) .left-panel,
+    body:not(.site-revealed) .right-panel {
+      opacity: 0;
+    }
+    body.site-revealed .topbar { animation: site-header-in 650ms both cubic-bezier(0.22, 1, 0.36, 1); }
+    body.site-revealed .left-panel { animation: site-image-in 850ms 80ms both ease-out; }
+    body.site-revealed .right-panel { animation: site-content-in 800ms 180ms both cubic-bezier(0.22, 1, 0.36, 1); }
+    @keyframes site-header-in { from { opacity: 0; transform: translateY(-18px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes site-image-in { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes site-content-in { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+    @media (prefers-reduced-motion: reduce) {
+      .cover-intro-image, .cover-intro-content, .cover-intro-action::after, .cover-loader::before, .topbar, .left-panel, .right-panel { animation: none !important; }
+      .collage-photo, .collage-photo img { transition: none !important; }
+      .cover-intro { transition: none; }
+    }
+
+    /* Header Styling */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      height: var(--header-h);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 clamp(16px, 4vw, 80px);
+      background: rgba(255, 255, 255, 0.96);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(16px);
+      transition: background-color 0.3s ease;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      min-width: 0;
+    }
+    .brand-logo {
+      max-height: 66px;
+      width: auto;
+      object-fit: contain;
+      display: block;
+    }
+
+    .top-nav {
+      display: flex;
+      gap: 28px;
+      height: 100%;
+      align-items: center;
+      margin-right: auto;
+      margin-left: 40px;
+    }
+    .top-nav a {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 150ms ease;
+      padding: 3px 0;
+    }
+    .top-nav a:hover {
+      color: var(--ink);
+    }
+    .top-nav a.active {
+      color: var(--ink);
+      font-weight: 600;
+    }
+    .top-nav a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 2px;
+      border-radius: 99px;
+      background: transparent;
+      transition: background-color 150ms ease;
+    }
+    .top-nav a:hover::after {
+      background: var(--line);
+    }
+    .top-nav a.active::after {
+      background: var(--button);
+    }
+
+    .book-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 38px;
+      padding: 0 20px;
+      border: 0;
+      border-radius: 6px;
+      background: var(--button);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 500;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: background-color 150ms ease, transform 100ms ease;
+    }
+    .book-btn:hover {
+      background: #1e293b; /* slate-800 */
+    }
+    .book-btn:active {
+      transform: scale(0.98);
+    }
+
+    .menu-btn {
+      width: 38px;
+      height: 38px;
+      display: none;
+      place-items: center;
+      border: 1px solid rgba(148, 163, 184, 0.26);
+      border-radius: 6px;
+      background: #ffffff;
+      color: var(--ink);
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .menu-btn:hover {
+      background: var(--soft);
+    }
+
+    /* 50:50 Split Layout */
+    .split-shell {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      width: 100%;
+      min-height: calc(100vh - var(--header-h));
+    }
+
+    /* Left Image Panel (Sticky, full below header) */
+    .left-panel {
+      width: 50%;
+      position: sticky;
+      top: var(--header-h);
+      height: calc(100vh - var(--header-h));
+      overflow: hidden;
+      color: #fff;
+      background: #0f172a;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .left-panel::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      background: linear-gradient(182deg, rgba(14,14,14,0.45) 0%, rgba(14,14,14,0.3) 15%, rgba(14,14,14,0.15) 30%, rgba(14,14,14,0.05) 45%, rgba(14,14,14,0) 100%);
+    }
+
+    .panel-slides {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .panel-slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      min-width: 100%;
+      min-height: 100%;
+      object-fit: cover;
+      object-position: center;
+      transform: translate3d(0, 100%, 0) scale(1.03);
+      will-change: transform;
+      z-index: 0;
+    }
+    .panel-slide[data-slide="slide-2"] {
+      object-position: center top;
+    }
+
+    /* Slide 2: cinematic frameless triangle grid */
+    .panel-collage {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-rows: repeat(2, minmax(0, 1fr));
+      gap: clamp(7px, 1vw, 12px);
+      padding: clamp(20px, 3vw, 36px);
+      overflow: hidden;
+      background: #102b31;
+      isolation: isolate;
+    }
+    .panel-collage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(5, 28, 34, 0.24), rgba(5, 28, 34, 0.42)),
+        url("slide-3.png") center / cover no-repeat;
+      filter: blur(12px) saturate(0.82) contrast(0.96);
+      transform: scale(1.06);
+    }
+    .panel-collage::after {
+      content: none;
+    }
+    .collage-photo {
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+      min-width: 0;
+      min-height: 0;
+      background: #0f172a;
+      border: 1px solid rgba(222, 183, 63, 0.42);
+      border-radius: 14px;
+      outline: 0;
+      box-shadow: 0 20px 46px rgba(1, 12, 16, 0.46);
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.28) 8%, #000 18%, #000 82%, rgba(0, 0, 0, 0.28) 92%, transparent 100%);
+      mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.28) 8%, #000 18%, #000 82%, rgba(0, 0, 0, 0.28) 92%, transparent 100%);
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-size: 100% 100%;
+      mask-size: 100% 100%;
+    }
+    .collage-photo.is-left {
+      grid-column: 1 / 3;
+      grid-row: 2;
+      transform: none;
+    }
+    .collage-photo.is-center {
+      z-index: 2;
+      grid-column: 2 / 4;
+      grid-row: 1;
+      border-color: rgba(222, 183, 63, 0.42);
+      box-shadow:
+        0 22px 52px rgba(1, 12, 16, 0.52),
+        0 0 26px rgba(222, 183, 63, 0.1);
+      transform: none;
+    }
+    .collage-photo.is-right {
+      z-index: 1;
+      grid-column: 3 / 5;
+      grid-row: 2;
+      transform: none;
+    }
+    .collage-photo img {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      filter: none;
+      transform: none;
+      opacity: 1;
+      transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1), filter 220ms ease;
+    }
+    .collage-photo::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      border-radius: inherit;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 24%),
+        linear-gradient(0deg, rgba(2, 18, 22, 0.34), transparent 34%);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.035);
+    }
+    .collage-photo.is-left img { object-position: 50% 42%; }
+    .collage-photo.is-center img { object-position: 50% 44%; }
+    .collage-photo.is-right img { object-position: 48% 42%; }
+    .panel-collage:hover .collage-photo img {
+      transform: scale(1.025);
+      filter: saturate(1.02) contrast(1.035);
+    }
+
+    .panel-heading {
+      position: relative;
+      z-index: 10;
+      margin-top: auto;
+      padding: 0 clamp(20px, 6vw, 80px) clamp(28px, 5vw, 64px);
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      transition: opacity 220ms cubic-bezier(0.4, 0, 0.2, 1), transform 220ms cubic-bezier(0.4, 0, 0.2, 1);
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+    .panel-heading.is-changing {
+      opacity: 0;
+      transform: translate3d(0, -8px, 0);
+    }
+    .panel-eyebrow {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .panel-title {
+      margin: 0;
+      color: #fff;
+      font-family: var(--font);
+      text-transform: uppercase;
+      font-size: clamp(28px, 3.8vw, 44px);
+      line-height: 1.1;
+      font-weight: 300;
+      text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.3);
+      letter-spacing: -0.015em;
+    }
+    .panel-subtitle {
+      color: rgba(255, 255, 255, 0.95);
+      font-size: clamp(14px, 1.6vw, 16px);
+      font-weight: 500;
+      text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.2);
+    }
+    .panel-hero-copy {
+      max-width: 42rem;
+      margin: 0;
+      padding: clamp(18px, 2.5vw, 28px);
+      border-left: 3px solid rgba(255, 255, 255, 0.8);
+      border-radius: 0 10px 10px 0;
+      background: linear-gradient(90deg, rgba(15, 23, 42, 0.84), rgba(15, 23, 42, 0.50));
+      backdrop-filter: blur(1px);
+      color: rgba(255, 255, 255, 0.96);
+      font-size: clamp(0.88rem, 1.25vw, 1.05rem);
+      font-weight: 400;
+      line-height: 1.65;
+      text-shadow: 1px 1px 8px rgba(0, 0, 0, 0.35);
+    }
+    /* Right Content Panel */
+    .right-panel {
+      width: 50%;
+      background: #ffffff;
+      padding: clamp(24px, 6vw, 80px);
+      padding-bottom: 50vh; /* Generous bottom padding to allow scrolling past the last item */
+    }
+
+    .section {
+      scroll-margin-top: calc(var(--header-h) + 24px);
+      padding: 0 0 clamp(32px, 5vw, 64px);
+      margin: 0 0 clamp(24px, 4vw, 48px);
+      border-bottom: 1px solid var(--line);
+      min-height: calc(100vh - var(--header-h));
+      box-sizing: border-box;
+    }
+    .section:last-child {
+      border-bottom: 0;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    .section-logo {
+      width: min(280px, 68vw);
+      height: auto;
+      margin: 24px 0 0;
+      display: block;
+      object-fit: contain;
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .round-icon {
+      width: 20px;
+      height: 20px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: var(--soft);
+      color: var(--ink);
+      font-size: 0.68rem;
+      font-weight: 700;
+    }
+    h1, h2, h3 { margin: 0; }
+    
+    .section h2 {
+      font-family: var(--font);
+      color: var(--ink);
+      font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+      font-weight: 400;
+      line-height: 1.25;
+      letter-spacing: -0.015em;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+    
+    .copy p {
+      color: var(--text);
+      font-size: 0.95rem;
+      font-weight: 300;
+      line-height: 1.65;
+      margin: 0 0 16px;
+    }
+    .copy p.lead {
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: var(--ink);
+      margin-bottom: 20px;
+    }
+
+    /* Artist Grid (Celebration) */
+    .artist-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 24px;
+    }
+    .artist {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .artist img {
+      width: 100%;
+      height: 230px;
+      border-radius: 8px;
+      object-fit: cover;
+      object-position: center top;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .artist img:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(15, 23, 42, 0.08);
+    }
+    .artist span {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--ink);
+      font-size: 0.8rem;
+      font-weight: 500;
+      line-height: 1.3;
+    }
+
+    /* Accordions */
+    .accordion-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    #slide-1 > .accordion {
+      margin-top: 32px;
+    }
+    .accordion {
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 10px;
+      background: #ffffff;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      overflow: hidden;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.025);
+    }
+    .accordion.open {
+      border-color: rgba(51, 65, 85, 0.24);
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.04);
+    }
+    .accordion-toggle {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      border: 0;
+      background: transparent;
+      text-align: left;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .accordion-title {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .accordion-title small {
+      color: var(--muted);
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .accordion-title strong {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--ink);
+      font-size: 1.05rem;
+      font-weight: 500;
+      line-height: 1.25;
+    }
+    .accordion-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .chevron {
+      width: 24px;
+      height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s ease, color 0.2s ease;
+    }
+    .chevron svg {
+      width: 12px;
+      height: 12px;
+    }
+    .accordion.open .chevron {
+      transform: rotate(180deg);
+      border-color: rgba(51, 65, 85, 0.28);
+      color: var(--ink);
+    }
+    
+    .accordion-panel {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 220ms ease;
+    }
+    .accordion.open .accordion-panel {
+      grid-template-rows: 1fr;
+    }
+    .accordion-content {
+      min-height: 0;
+      overflow: hidden;
+    }
+    .accordion-inner {
+      padding: 0 20px 20px;
+      border-top: 1px solid var(--line);
+    }
+
+    /* Host a Table Tiers */
+    .tier-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .tier {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--soft);
+      display: flex;
+      flex-direction: column;
+    }
+    .tier-top h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin: 0 0 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .price {
+      margin-top: 4px;
+      color: var(--gold);
+      font-size: 1.35rem;
+      font-weight: 700;
+    }
+    .benefits {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 12px 0 0;
+      margin: 12px 0 0;
+      border-top: 1px solid var(--line);
+      list-style: none;
+      color: #1e293b;
+      font-size: 0.8rem;
+      font-weight: 400;
+    }
+    .benefits li {
+      position: relative;
+      padding-left: 14px;
+      line-height: 1.45;
+    }
+    .benefits li::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: var(--gold);
+      font-weight: bold;
+    }
+
+    /* Recognition Details */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .info-box {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--soft);
+    }
+    .info-box .label {
+      margin: 0 0 4px;
+      color: var(--muted);
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .info-box .value {
+      margin: 0;
+      color: var(--ink);
+      font-size: 1.15rem;
+      font-weight: 600;
+    }
+    .names {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      padding: 0;
+      margin: 20px 0 0;
+      list-style: none;
+    }
+    .names li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 0.85rem;
+      font-weight: 300;
+      background: var(--soft);
+    }
+
+    /* Price Lists (Sponsor underwritings) */
+    .price-list {
+      margin-top: 20px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 18px;
+      background: #ffffff;
+      border-bottom: 1px solid var(--line);
+    }
+    .price-row:last-child {
+      border-bottom: 0;
+    }
+    .price-row:nth-child(even) {
+      background: var(--soft);
+    }
+    .price-row span:first-child {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #1e293b;
+      font-weight: 500;
+      font-size: 0.88rem;
+    }
+    .price-row span:last-child {
+      color: var(--ink);
+      font-weight: 700;
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+    .price-row.has-asterisk span:first-child::after {
+      content: " *";
+      color: var(--gold);
+      font-weight: 700;
+    }
+    .note {
+      margin: 16px 0 0;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+    .recognition-photo {
+      margin: 20px 0 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .recognition-photo img {
+      width: 100%;
+      max-width: 240px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+    .recognition-photo figcaption {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.5;
+    }
+    .committee-heading {
+      margin: 20px 0 0;
+      color: var(--ink);
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .contact-link {
+      color: var(--button);
+      font-weight: 500;
+      text-decoration: underline;
+    }
+
+    /* Important info boxes */
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .detail-box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      background: #ffffff;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.01);
+    }
+    .detail-box h3 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin: 0 0 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .detail-box p {
+      font-size: 0.82rem;
+      font-weight: 300;
+      line-height: 1.5;
+      color: var(--text);
+      margin: 0;
+    }
+
+    /* Mobile Drawer Menu */
+    .drawer {
+      position: fixed;
+      inset: var(--header-h) 0 0 auto;
+      z-index: 55;
+      width: 100%;
+      max-width: 300px;
+      padding: 24px;
+      background: #ffffff;
+      border-left: 1px solid var(--line);
+      box-shadow: -10px 0 30px rgba(15, 23, 42, 0.05);
+      transform: translateX(100%);
+      transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .drawer.open { transform: translateX(0); }
+    .drawer-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .drawer-nav a {
+      padding: 12px 16px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--text);
+      font-weight: 500;
+      text-transform: uppercase;
+      font-size: 0.88rem;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+    .drawer-nav a.active,
+    .drawer-nav a:hover {
+      background: var(--soft);
+      color: var(--ink);
+      border-color: var(--button);
+    }
+
+    /* Mobile Bookbar Bottom */
+    .mobile-bookbar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 60;
+      display: none;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+      background: rgba(255, 255, 255, 0.98);
+      border-top: 1px solid var(--line);
+      box-shadow: 0 -4px 20px rgba(15, 23, 42, 0.06);
+      backdrop-filter: blur(12px);
+    }
+    .mobile-bookbar strong {
+      display: block;
+      color: var(--ink);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .mobile-bookbar span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 400;
+      margin-top: 2px;
+    }
+
+    /* Responsiveness Breakpoints */
+    @media (max-width: 1024px) {
+      .right-panel {
+        padding: clamp(24px, 4vw, 48px);
+      }
+      .tier-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .topbar {
+        padding: 0 20px;
+      }
+      .top-nav { display: none; }
+      .menu-btn { display: grid; }
+      .topbar .book-btn { display: none; }
+      .split-shell { display: flex; flex-direction: column; }
+      .left-panel {
+        width: 100%;
+        position: relative;
+        top: auto;
+        height: auto;
+        aspect-ratio: 1 / 1;
+      }
+      .panel-heading {
+        padding: 0 20px 24px;
+      }
+      .right-panel {
+        width: 100%;
+        padding: 40px 20px 88px;
+      }
+      .artist-grid {
+        grid-template-columns: 1fr;
+      }
+      .artist img {
+        height: 260px;
+      }
+      .panel-collage {
+        gap: 5px;
+        padding: 12px;
+      }
+      .collage-photo {
+        border-width: 1px;
+        border-radius: 8px;
+      }
+      .collage-photo::after { inset: 0; }
+      .collage-photo.is-left,
+      .collage-photo.is-right {
+        grid-row: 2;
+      }
+      .collage-photo.is-left { grid-column: 1 / 3; }
+      .collage-photo.is-right { grid-column: 3 / 5; }
+      .collage-photo.is-center {
+        grid-column: 2 / 4;
+        grid-row: 1;
+      }
+      .grid-2,
+      .names,
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+      .mobile-bookbar { display: flex; }
+    }
+
+    @media (max-width: 480px) {
+      .panel-title { font-size: 2rem; }
+      .section h2 { font-size: 1.35rem; }
+      .accordion-toggle {
+        padding: 14px 16px;
+      }
+      .accordion-inner {
+        padding: 0 16px 16px;
+      }
+    }
+  </style>
+</head>
+<body class="intro-open">
+  <button class="cover-intro is-loading" type="button" aria-label="Open the AMPLIFY gala experience">
+    <img class="cover-intro-image" src="cover.png" alt="" aria-hidden="true">
+    <span class="cover-loader" aria-live="polite">Loading experience</span>
+    <span class="cover-intro-content">
+      <span class="cover-intro-kicker">San Diego Symphony Gala</span>
+      <span class="cover-intro-action">Tap anywhere to open</span>
+    </span>
+  </button>
+  <header class="topbar">
+    <a class="brand" href="#slide-1">
+      <img src="logo-SDS-Horizontal-Black.png" alt="San Diego Symphony" class="brand-logo">
+    </a>
+    <nav class="top-nav" aria-label="Sticky navigation">
+      <a href="#slide-1">The Gala</a>
+      <a href="#slide-2">The Evening</a>
+      <a href="#slide-3">Host a Table</a>
+      <a href="#slide-4">Give &amp; Underwrite</a>
+    </nav>
+    <div>
+      <a class="book-btn" href="https://purchasing.sandiegosymphony.org/10190/10191" target="_blank" rel="noopener noreferrer">Book Now</a>
+      <button class="menu-btn" type="button" aria-label="Open menu" aria-expanded="false">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <aside class="drawer" aria-hidden="true">
+    <nav class="drawer-nav" aria-label="Mobile navigation">
+      <a href="#slide-1">The Gala</a>
+      <a href="#slide-2">The Evening</a>
+      <a href="#slide-3">Host a Table</a>
+      <a href="#slide-4">Give &amp; Underwrite</a>
+    </nav>
+  </aside>
+
+  <main class="split-shell">
+    <section class="left-panel" aria-label="Gala images">
+      <div class="panel-slides" aria-hidden="true">
+        <img class="panel-slide is-active" data-slide="slide-1" src="slide-1.png" alt="">
+        <div class="panel-slide panel-collage" data-slide="slide-2">
+          <div class="collage-photo is-left"><img src="3-for-slide.png" alt=""></div>
+          <div class="collage-photo is-center"><img src="2-for-slide.png" alt=""></div>
+          <div class="collage-photo is-right"><img src="1-for-slide.png" alt=""></div>
+        </div>
+        <img class="panel-slide" data-slide="slide-3" src="slide-3.png" alt="">
+        <img class="panel-slide" data-slide="slide-4" src="slide-4.png" alt="">
+      </div>
+    </section>
+
+    <section class="right-panel" aria-label="Gala details">
+      <article class="section section-anchor" id="slide-1">
+        <p class="kicker">Signature Annual Gala</p>
+        <h2>AMPLIFY: A Gala Evening with the San Diego Symphony</h2>
+        <div class="copy">
+          <p class="lead">Saturday, November 21 at Jacobs Music Center.</p>
+          <p class="lead" style="margin-top: -12px; margin-bottom: 24px; font-size: 1.1rem; font-weight: 400; color: var(--ink);">5:00 PM</p>
+          <p>A great symphony orchestra is a powerful act of amplification. Individual musicians come together to create something greater than themselves—performances that move, inspire, and uplift audiences. <strong>AMPLIFY</strong>, the San Diego Symphony Gala, celebrates that same spirit, bringing together remarkable artists, visionary supporters, and a shared belief in the power of music to transform lives. As a sponsor of this year’s Gala, you become part of that amplification. Your generosity is the key to ensuring that our music, mission, and legacy continue to enrich our community and inspire generations to come.</p>
+          <img class="section-logo" src="logo-SDS-Horizontal-Black.png" alt="San Diego Symphony">
+        </div>
+        <div class="copy" style="margin-top: 24px;">
+          <h3 style="font-size:1rem; font-weight:600; margin:0 0 12px; color:var(--ink);">Evening Schedule</h3>
+          <div class="detail-grid">
+            <article class="detail-box">
+              <h3>5:00–6:30 PM</h3>
+              <p><strong><b>Cocktail Reception</b></strong><br>Guests will be welcomed to an elegant cocktail reception featuring handcrafted cocktails and exceptional hors d'oeuvres created by celebrity chef Richard Blais.</p>
+            </article>
+            <article class="detail-box">
+              <h3>6:30 PM</h3>
+              <p><strong><b>One-Night-Only Concert</b></strong><br>The evening continues with an exclusive, one-night-only concert featuring singer Isabel Leonard, with a special appearance by singer-songwriter Jason Mraz performing alongside the San Diego Symphony under the direction of Music and Artistic Director Rafael Payare. Created exclusively for AMPLIFY, this extraordinary performance offers guests a rare and intimate musical experience available only on this special evening.</p>
+            </article>
+            <article class="detail-box">
+              <h3>8:00 PM</h3>
+              <p><strong><b>Gala Dinner &amp; Celebration</b></strong><br>Following the performance, guests will enjoy an exceptional multi-course dinner created by Urban Kitchen Group, led by Tracy Borkum.</p>
+            </article>
+            <article class="detail-box">
+              <h3>9:30 PM</h3>
+              <p><strong><b>AMPLIFY After Party</b></strong><br>As the formal program concludes, the celebration continues with the AMPLIFY After Party. Guests are invited to enjoy music and dancing as the energy of the evening carries into the night—a wonderful finale celebrating the community that makes the San Diego Symphony possible.</p>
+            </article>
+          </div>
+        </div>
+        <div class="copy" style="margin-top: 20px;">
+          <h3 style="font-size:1rem; font-weight:600; margin:0 0 8px; color:var(--ink);">Dress Code</h3>
+          <p>Black Tie Optional. We invite guests to dress for an elegant and memorable evening celebrating the San Diego Symphony and its impact on our community.</p>
+        </div>
+      </article>
+
+      <article class="section section-anchor" id="slide-2">
+        <p class="kicker">Celebration</p>
+        <h2>An Extraordinary Evening of Celebration</h2>
+        <div class="copy">
+          <p>Join us at Jacobs Music Center for <strong>AMPLIFY</strong>, the San Diego Symphony’s signature annual gala. This year, we honor Raffaella Belanich, whose generosity and vision helped make transformative Symphony projects possible, including The Rady Shell at Jacobs Park and the reimagined Jacobs Music Center. Enjoy cocktails and culinary experiences from Chef Richard Blais, followed by a one-night-only concert featuring internationally acclaimed singer Isabel Leonard and a special appearance by Jason Mraz, performing with the San Diego Symphony under the direction of Music and Artistic Director Rafael Payare. The celebration continues with dinner by Urban Kitchen Group, led by Tracy Borkum, and an after-party that carries the energy of the evening late into the night. Proceeds from <strong>AMPLIFY</strong> support the Symphony’s artistic, educational, and community programs—expanding access to music and amplifying its impact for generations to come.</p>
+        </div>
+        <div class="artist-grid" style="margin-top:20px">
+          <article class="artist">
+            <img src="1.png" alt="Singer Isabel Leonard">
+            <span>Singer Isabel Leonard</span>
+          </article>
+          <article class="artist">
+            <img src="2.png" alt="Music and Artistic Director Rafael Payare">
+            <span>Music and Artistic Director Rafael Payare</span>
+          </article>
+          <article class="artist">
+            <img src="3.png" alt="Singer-songwriter Jason Mraz">
+            <span>Singer-songwriter Jason Mraz</span>
+          </article>
+        </div>
+      </article>
+
+      <article class="section section-anchor" id="slide-3">
+        <p class="kicker">Tables & Leadership</p>
+        <h2>Host a Table</h2>
+        <div class="accordion-list">
+          <article class="accordion open">
+            <button class="accordion-toggle" type="button" aria-expanded="true">
+              <span class="accordion-title"><small>Sponsorship Levels</small></span>
+              <span class="accordion-meta">10 Guests <span class="chevron"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></span>
+            </button>
+            <div class="accordion-panel">
+              <div class="accordion-content">
+                <div class="accordion-inner">
+                  <!-- Add a single-ticket option here after August 1, when tickets go on sale. -->
+                  <div class="tier-grid">
+                    <article class="tier">
+                      <div class="tier-top"><h3>Fortissimo Level</h3><div class="price">$50,000</div></div>
+                      <ul class="benefits">
+                        <li>Table for 10 guests</li>
+                        <li>Prominent listing on the Gala invitation, program, and signage at the event</li>
+                        <li>Includes cocktail reception, dinner, and after-party</li>
+                        <li>Valet parking with priority retrieval at the end of the evening</li>
+                        <li>Dedicated table service and a preferred table location for dinner</li>
+                        <li>Elevated concert experience</li>
+                      </ul>
+                    </article>
+                    <article class="tier">
+                      <div class="tier-top"><h3>Forte Level</h3><div class="price">$35,000</div></div>
+                      <ul class="benefits">
+                        <li>Table for 10 guests</li>
+                        <li>Preferred listing on the Gala invitation, program, and signage at the event</li>
+                        <li>Includes cocktail reception, dinner, and after-party</li>
+                        <li>Valet parking</li>
+                        <li>Premium dinner and concert seating</li>
+                      </ul>
+                    </article>
+                    <article class="tier">
+                      <div class="tier-top"><h3>Mezzo Forte Level</h3><div class="price">$20,000</div></div>
+                      <ul class="benefits">
+                        <li>Table for 10 guests</li>
+                        <li>Listing on the Gala invitation, program, and signage at the event</li>
+                        <li>Includes cocktail reception, dinner, and after-party</li>
+                        <li>Valet parking</li>
+                        <li>Dinner and concert seating</li>
+                      </ul>
+                    </article>
+                  </div>
+                  <p class="note">Fair Market Value per table is $5,000 or $500 per person. Additional tables may be purchased and placed adjacently.</p>
+                  <p class="note">Contact Special Events at <a class="contact-link" href="mailto:Specialevents@sandiegosymphony.org">Specialevents@sandiegosymphony.org</a>.</p>
+                </div>
+              </div>
+            </div>
+          </article>
+          <article class="accordion open">
+            <button class="accordion-toggle" type="button" aria-expanded="true">
+              <span class="accordion-title"><strong>Recognition</strong></span>
+              <span class="accordion-meta">Leadership <span class="chevron"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></span>
+            </button>
+            <div class="accordion-panel">
+              <div class="accordion-content">
+                <div class="accordion-inner">
+                  <div class="grid-2">
+                    <article class="info-box"><p class="label">Honorary Chair</p><p class="value">Irwin Jacobs</p></article>
+                    <article class="info-box"><p class="label">In Honor Of</p><p class="value">Raffaella Belanich</p></article>
+                  </div>
+                  <h3 class="committee-heading">Steering Committee</h3>
+                  <ul class="names" style="margin-top:16px">
+                    <li>Michele Arthur</li>
+                    <li>Karen and Jeff Silberman</li>
+                    <li>Ross Caleca and Hayley Janecek</li>
+                    <li>Sandra and Henny den Uijl</li>
+                    <li>George Guerra</li>
+                    <li>Robert A. Rubenstein, M.D. and Marie G. Raftery</li>
+                    <li>Susan Tousi and Randy Camp</li>
+                    <li>Lisa and Michael Witz</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </article>
+
+      <article class="section section-anchor" id="slide-4">
+        <p class="kicker">Sponsor</p>
+        <h2>Become a Sponsor</h2>
+        <div class="copy">
+          <p>Become an underwriting sponsor and help bring an extraordinary evening of music, artistry, and inspiration to life. More importantly your support makes it possible for the San Diego Symphony to continue creating unforgettable experiences that move and connect audiences across our community. Your fully tax-deductible contribution helps maximize the funds directed toward the San Diego Symphony’s artistic and community engagement programs. We deeply appreciate your generosity, which will be recognized at the San Diego Symphony Gala. Even if you are unable to attend, you can still support our mission by sponsoring one or more of the items listed below.</p>
+          <p>
+        </div>
+        <div class="accordion-list">
+          <article class="accordion open">
+            <button class="accordion-toggle" type="button" aria-expanded="true">
+              <span class="accordion-title"><small>Underwriting Opportunities</small><strong>Support the evening</strong></span>
+              <span class="accordion-meta">Tax-deductible <span class="chevron"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></span>
+            </button>
+            <div class="accordion-panel">
+              <div class="accordion-content">
+                <div class="accordion-inner">
+                  <div class="price-list">
+                    <div class="price-row"><span>Winds</span><span>$25,000</span></div>
+                    <div class="price-row"><span>Brass</span><span>$25,000</span></div>
+                    <div class="price-row"><span>Strings</span><span>$25,000</span></div>
+                    <div class="price-row"><span>Percussion</span><span>$25,000</span></div>
+                    <div class="price-row"><span>Isabel Leonard Underwriting</span><span>$25,000</span></div>
+                    <div class="price-row"><span>Chef Richard Blais Underwriting</span><span>$10,000</span></div>
+                    <div class="price-row"><span>Dinner Reception decor</span><span>$10,000</span></div>
+                    <div class="price-row"><span>Dinner tables and chairs</span><span>$10,000</span></div>
+                    <div class="price-row has-asterisk"><span>Dinner</span><span>$10,000</span></div>
+                    <div class="price-row"><span>Valet</span><span>$8,500</span></div>
+                    <div class="price-row"><span>Dinner wine</span><span>$6,000</span></div>
+                    <div class="price-row has-asterisk"><span>Entertainment</span><span>$5,000</span></div>
+                    <div class="price-row has-asterisk"><span>Invitations</span><span>$5,000</span></div>
+                    <div class="price-row has-asterisk"><span>Florals</span><span>$5,000</span></div>
+                    <div class="price-row has-asterisk"><span>Linens</span><span>$5,000</span></div>
+                    <div class="price-row has-asterisk"><span>Reception Bar</span><span>$5,000</span></div>
+                    <div class="price-row"><span>Champagne</span><span>$4,000</span></div>
+                    <div class="price-row"><span>Programs</span><span>$3,000</span></div>
+                    <div class="price-row has-asterisk"><span>Specialty cocktail</span><span>$3,000</span></div>
+                    <div class="price-row"><span>Photographer</span><span>$2,000</span></div>
+                  </div>
+                  <p class="note">* Multiple underwriting opportunities are available. Tickets are not included with underwriting opportunities.</p>
+                </div>
+              </div>
+            </div>
+          </article>
+          <article class="accordion open">
+            <button class="accordion-toggle" type="button" aria-expanded="true">
+              <span class="accordion-title"><small>Important Info</small></span>
+              <span class="accordion-meta">August 1, 2026 <span class="chevron"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></span>
+            </button>
+            <div class="accordion-panel">
+              <div class="accordion-content">
+                <div class="accordion-inner">
+                  <div class="detail-grid">
+                    <article class="detail-box"><h3>Acknowledgment Deadline</h3><p>Donations received by August 1, 2026, will be acknowledged on the formal printed invitation, program, and digital signage. Donations received after August 1, 2026 will be acknowledged in the program and on digital signage.</p></article>
+                    <article class="detail-box"><h3>Contact</h3><p>Contact Special Events at <a class="contact-link" href="mailto:SpecialEvents@SanDiegoSymphony.org">SpecialEvents@SanDiegoSymphony.org</a> or <a class="contact-link" href="tel:+16196153906">619-615-3906</a>.</p></article>
+                    <article class="detail-box"><h3>Refund Policy</h3><p>No refunds available. A portion of Gala tickets may be tax-deductible.</p></article>
+                    <article class="detail-box"><h3>Cancellation Policy</h3><p>In the event of cancellation due to inclement weather or city mandate, all tickets will be considered fully deductible charitable donations.</p></article>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <div class="mobile-bookbar">
+    <div>
+      <strong>Tables from $20,000</strong>
+      <span>Saturday, November 21 - Jacobs Music Center</span>
+    </div>
+    <a class="book-btn" href="https://purchasing.sandiegosymphony.org/10190/10191" target="_blank" rel="noopener noreferrer">Book Now</a>
+  </div>
+
+  <script>
+    const navLinks = Array.from(document.querySelectorAll('.top-nav a, .drawer-nav a'));
+    const anchors = Array.from(document.querySelectorAll('.section-anchor'));
+    const drawer = document.querySelector('.drawer');
+    const menuButton = document.querySelector('.menu-btn');
+    const accordions = Array.from(document.querySelectorAll('.accordion'));
+    const slides = Array.from(document.querySelectorAll('.panel-slide'));
+    const coverIntro = document.querySelector('.cover-intro');
+    const coverIntroImage = document.querySelector('.cover-intro-image');
+
+    function revealCover() {
+      coverIntro?.classList.remove('is-loading');
+      coverIntro?.classList.add('is-ready');
+    }
+
+    if (coverIntroImage?.complete && coverIntroImage.naturalWidth > 0) {
+      revealCover();
+    } else {
+      coverIntroImage?.addEventListener('load', revealCover, { once: true });
+      coverIntroImage?.addEventListener('error', revealCover, { once: true });
+    }
+
+    function openGalaExperience() {
+      if (!coverIntro || coverIntro.classList.contains('is-opening')) return;
+      coverIntro.classList.add('is-opening');
+      document.body.classList.remove('intro-open');
+      document.body.classList.add('site-revealed');
+      window.setTimeout(() => coverIntro.remove(), 850);
+    }
+
+    coverIntro?.addEventListener('click', openGalaExperience);
+
+    const slideData = {
+      'slide-1': {
+        eyebrow: 'San Diego Symphony Gala',
+        title: 'AMPLIFY',
+        subtitle: 'Saturday, November 21 - Jacobs Music Center'
+      },
+      'slide-2': {
+        eyebrow: 'Extraordinary Evening',
+        title: 'CELEBRATION',
+        subtitle: 'Culinary Artistry & Live Performances'
+      },
+      'slide-3': {
+        eyebrow: 'Tables & Leadership',
+        title: 'HOST A TABLE',
+        subtitle: 'Support the Symphony community'
+      },
+      'slide-4': {
+        eyebrow: 'Become an Underwriter',
+        title: 'BECOME A SPONSOR',
+        subtitle: 'Help bring music to life'
+      }
+    };
+
+    let currentActiveId = null;
+
+    // Keep leadership recognition immediately below the Gala introduction for now.
+    const recognition = Array.from(document.querySelectorAll('.accordion')).find((accordion) => {
+      const titleEl = accordion.querySelector('.accordion-title');
+      return titleEl && titleEl.textContent.trim().includes('Recognition');
+    });
+    const galaIntro = document.querySelector('#slide-1 .copy');
+    if (recognition && galaIntro) galaIntro.insertAdjacentElement('afterend', recognition);
+
+    function setActive(id) {
+      navLinks.forEach((link) => {
+        const active = link.getAttribute('href') === `#${id}`;
+        link.classList.toggle('active', active);
+        if (active && link.closest('.top-nav')) {
+          link.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+      });
+
+      if (id !== currentActiveId) {
+        currentActiveId = id;
+      }
+    }
+
+    function closeDrawer() {
+      drawer.classList.remove('open');
+      drawer.setAttribute('aria-hidden', 'true');
+      menuButton.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('drawer-open');
+    }
+
+    accordions.forEach((accordion) => {
+      const toggle = accordion.querySelector('.accordion-toggle');
+      toggle.addEventListener('click', () => {
+        const open = !accordion.classList.contains('open');
+        accordion.classList.toggle('open', open);
+        toggle.setAttribute('aria-expanded', String(open));
+      });
+    });
+
+    menuButton.addEventListener('click', () => {
+      const open = !drawer.classList.contains('open');
+      drawer.classList.toggle('open', open);
+      drawer.setAttribute('aria-hidden', String(!open));
+      menuButton.setAttribute('aria-expanded', String(open));
+      document.body.classList.toggle('drawer-open', open);
+    });
+
+    navLinks.forEach((link) => {
+      link.addEventListener('click', () => {
+        setActive(link.getAttribute('href').slice(1));
+        closeDrawer();
+      });
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') closeDrawer();
+    });
+
+    // Scroll-driven slide positions: images follow scroll progress between sections
+    function updateSlidePositions() {
+      const headerH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 64;
+      const activationLine = window.innerHeight * 0.28;
+
+      // Get each section's top position relative to viewport
+      const sectionTops = anchors.map(s => s.getBoundingClientRect().top);
+
+      // Determine the active section index and the scroll progress toward the next one
+      let activeIdx = 0;
+      let progress = 0; // 0 = fully on current, 1 = fully on next
+
+      for (let i = 0; i < sectionTops.length; i++) {
+        if (sectionTops[i] <= activationLine) {
+          activeIdx = i;
+        }
+      }
+
+      // Slide appears aligned with its section title:
+      // starts when title enters viewport bottom, completes when title hits activation line
+      if (activeIdx < sectionTops.length - 1) {
+        const nextTop = sectionTops[activeIdx + 1];
+        const viewportBottom = window.innerHeight;
+        if (nextTop >= viewportBottom) {
+          // Section title not yet visible — no transition
+          progress = 0;
+        } else if (nextTop <= activationLine) {
+          // Section title has reached activation line — fully transitioned
+          progress = 1;
+        } else {
+          // Section title is between viewport bottom and activation line
+          progress = 1 - ((nextTop - activationLine) / (viewportBottom - activationLine));
+        }
+      }
+
+      // Bottom of page override
+      if ((window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight - 80) {
+        activeIdx = anchors.length - 1;
+        progress = 0;
+      }
+
+      // Stacking effect: next image slides up and covers the current one
+      slides.forEach((slide, i) => {
+        if (i <= activeIdx) {
+          // Current and all previous slides: stay in place
+          slide.style.transform = `translate3d(0, 0%, 0) scale(1.03)`;
+          slide.style.zIndex = i + 1;
+          slide.style.visibility = 'visible';
+        } else if (i === activeIdx + 1 && progress > 0) {
+          // Next slide: only visible when actively transitioning
+          const ty = (1 - progress) * 100;
+          slide.style.transform = `translate3d(0, ${ty}%, 0) scale(1.03)`;
+          slide.style.zIndex = activeIdx + 2;
+          slide.style.visibility = 'visible';
+        } else {
+          // All other slides: completely hidden off-screen
+          slide.style.transform = `translate3d(0, 110%, 0)`;
+          slide.style.zIndex = 0;
+          slide.style.visibility = 'hidden';
+        }
+      });
+
+      // Set active id for nav highlights and heading text
+      const activeId = anchors[activeIdx]?.id || 'slide-1';
+      setActive(activeId);
+    }
+
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          updateSlidePositions();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+    window.addEventListener('resize', updateSlidePositions);
+
+    // Initialize
+    setActive('slide-1');
+    updateSlidePositions();
+  </script>
+</body>
+</html>
