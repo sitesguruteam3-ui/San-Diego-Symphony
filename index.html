@@ -171,6 +171,7 @@
     @keyframes site-content-in { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
     @media (prefers-reduced-motion: reduce) {
       .cover-intro-image, .cover-intro-content, .cover-intro-action::after, .cover-loader::before, .topbar, .left-panel, .right-panel { animation: none !important; }
+      .collage-photo, .collage-photo img { transition: none !important; }
       .cover-intro { transition: none; }
     }
 
@@ -341,6 +342,80 @@
       object-position: center top;
     }
 
+    /* Slide 2: solid editorial triangle grid */
+    .panel-collage {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-rows: repeat(2, minmax(0, 1fr));
+      gap: clamp(8px, 1vw, 14px);
+      padding: clamp(22px, 3vw, 38px);
+      overflow: hidden;
+      background: #102b31;
+      isolation: isolate;
+    }
+    .panel-collage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(5, 28, 34, 0.24), rgba(5, 28, 34, 0.42)),
+        url("slide-3.png") center / cover no-repeat;
+      filter: blur(12px) saturate(0.82) contrast(0.96);
+      transform: scale(1.06);
+    }
+    .panel-collage::after {
+      content: none;
+    }
+    .collage-photo {
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+      min-width: 0;
+      min-height: 0;
+      background: #0b3036;
+      border: 1px solid rgba(222, 183, 63, 0.62);
+      border-radius: 10px;
+      box-shadow: 0 16px 36px rgba(1, 15, 19, 0.34);
+    }
+    .collage-photo.is-left {
+      grid-column: 1 / 3;
+      grid-row: 2;
+      transform: none;
+    }
+    .collage-photo.is-center {
+      z-index: 2;
+      grid-column: 2 / 4;
+      grid-row: 1;
+      transform: none;
+    }
+    .collage-photo.is-right {
+      z-index: 1;
+      grid-column: 3 / 5;
+      grid-row: 2;
+      transform: none;
+    }
+    .collage-photo img {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      filter: none;
+      transform: none;
+      opacity: 1;
+      transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1), filter 220ms ease;
+    }
+    .collage-photo.is-left img { object-position: 50% 42%; }
+    .collage-photo.is-center img { object-position: 50% 44%; }
+    .collage-photo.is-right img { object-position: 48% 42%; }
+    .panel-collage:hover .collage-photo img {
+      transform: scale(1.025);
+      filter: saturate(1.04) contrast(1.02);
+    }
+
     .panel-heading {
       position: relative;
       z-index: 10;
@@ -460,7 +535,6 @@
       margin-top: 0;
       margin-bottom: 20px;
     }
-    
     .copy p {
       color: var(--text);
       font-size: 0.95rem;
@@ -800,6 +874,22 @@
       gap: 16px;
       margin-top: 20px;
     }
+    .section-subheading {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin: 0 0 12px;
+      color: var(--ink);
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    .section-subheading.is-compact { margin-bottom: 8px; }
+    .section-subheading svg {
+      flex: 0 0 auto;
+      width: 20px;
+      height: 20px;
+      color: var(--gold);
+    }
     .detail-box {
       border: 1px solid var(--line);
       border-radius: 8px;
@@ -928,6 +1018,23 @@
       .artist img {
         height: 260px;
       }
+      .panel-collage {
+        gap: 6px;
+        padding: 12px;
+      }
+      .collage-photo {
+        border-radius: 6px;
+      }
+      .collage-photo.is-left,
+      .collage-photo.is-right {
+        grid-row: 2;
+      }
+      .collage-photo.is-left { grid-column: 1 / 3; }
+      .collage-photo.is-right { grid-column: 3 / 5; }
+      .collage-photo.is-center {
+        grid-column: 2 / 4;
+        grid-row: 1;
+      }
       .grid-2,
       .names,
       .detail-grid {
@@ -992,7 +1099,11 @@
     <section class="left-panel" aria-label="Gala images">
       <div class="panel-slides" aria-hidden="true">
         <img class="panel-slide is-active" data-slide="slide-1" src="slide-1.png" alt="">
-        <img class="panel-slide" data-slide="slide-2" src="slide-2-v2.png" alt="">
+        <div class="panel-slide panel-collage" data-slide="slide-2">
+          <div class="collage-photo is-left"><img src="3-for-slide.png" alt=""></div>
+          <div class="collage-photo is-center"><img src="2-for-slide.png" alt=""></div>
+          <div class="collage-photo is-right"><img src="1-for-slide.png" alt=""></div>
+        </div>
         <img class="panel-slide" data-slide="slide-3" src="slide-3.png" alt="">
         <img class="panel-slide" data-slide="slide-4" src="slide-4.png" alt="">
       </div>
@@ -1009,7 +1120,13 @@
           <img class="section-logo" src="logo-SDS-Horizontal-Black.png" alt="San Diego Symphony">
         </div>
         <div class="copy" style="margin-top: 24px;">
-          <h3 style="font-size:1rem; font-weight:600; margin:0 0 12px; color:var(--ink);">Evening Schedule</h3>
+          <h3 class="section-subheading">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="M12 7v5l3 2"></path>
+            </svg>
+            <span>Evening Schedule</span>
+          </h3>
           <div class="detail-grid">
             <article class="detail-box">
               <h3>5:00–6:30 PM</h3>
@@ -1030,8 +1147,13 @@
           </div>
         </div>
         <div class="copy" style="margin-top: 20px;">
-          <h3 style="font-size:1rem; font-weight:600; margin:0 0 8px; color:var(--ink);">Dress Code</h3>
-          <p>Black Tie Optional. We invite guests to dress for an elegant and memorable evening celebrating the San Diego Symphony and its impact on our community.</p>
+          <h3 class="section-subheading is-compact">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M15 4l4 2 2 5-3 1-1-3v11H7V9l-1 3-3-1 2-5 4-2a3 3 0 0 0 6 0Z"></path>
+            </svg>
+            <span>Dress Code</span>
+          </h3>
+          <p>Embrace an evening of bold elegance and timeless glamour. Rich jewel tones, luxurious textures, and a touch of timeless sophistication are encouraged. Dress in whatever makes you feel festive and ready for an unforgettable night.</p>
         </div>
       </article>
 
@@ -1124,7 +1246,7 @@
                   <h3 class="committee-heading">Steering Committee</h3>
                   <ul class="names" style="margin-top:16px">
                     <li>Michele Arthur</li>
-                    <li>Karen and Jeff Silberman</li>
+                    <li>Karen Foster Silverman and Jeff Silberman</li>
                     <li>Ross Caleca and Hayley Janecek</li>
                     <li>Sandra and Henny den Uijl</li>
                     <li>George Guerra</li>

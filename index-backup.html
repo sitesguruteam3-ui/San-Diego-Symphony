@@ -171,7 +171,6 @@
     @keyframes site-content-in { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
     @media (prefers-reduced-motion: reduce) {
       .cover-intro-image, .cover-intro-content, .cover-intro-action::after, .cover-loader::before, .topbar, .left-panel, .right-panel { animation: none !important; }
-      .collage-photo, .collage-photo img { transition: none !important; }
       .cover-intro { transition: none; }
     }
 
@@ -340,80 +339,6 @@
     }
     .panel-slide[data-slide="slide-2"] {
       object-position: center top;
-    }
-
-    /* Slide 2: solid editorial triangle grid */
-    .panel-collage {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      grid-template-rows: repeat(2, minmax(0, 1fr));
-      gap: clamp(8px, 1vw, 14px);
-      padding: clamp(22px, 3vw, 38px);
-      overflow: hidden;
-      background: #102b31;
-      isolation: isolate;
-    }
-    .panel-collage::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      background:
-        linear-gradient(180deg, rgba(5, 28, 34, 0.24), rgba(5, 28, 34, 0.42)),
-        url("slide-3.png") center / cover no-repeat;
-      filter: blur(12px) saturate(0.82) contrast(0.96);
-      transform: scale(1.06);
-    }
-    .panel-collage::after {
-      content: none;
-    }
-    .collage-photo {
-      position: relative;
-      z-index: 1;
-      overflow: hidden;
-      min-width: 0;
-      min-height: 0;
-      background: #0b3036;
-      border: 1px solid rgba(222, 183, 63, 0.62);
-      border-radius: 10px;
-      box-shadow: 0 16px 36px rgba(1, 15, 19, 0.34);
-    }
-    .collage-photo.is-left {
-      grid-column: 1 / 3;
-      grid-row: 2;
-      transform: none;
-    }
-    .collage-photo.is-center {
-      z-index: 2;
-      grid-column: 2 / 4;
-      grid-row: 1;
-      transform: none;
-    }
-    .collage-photo.is-right {
-      z-index: 1;
-      grid-column: 3 / 5;
-      grid-row: 2;
-      transform: none;
-    }
-    .collage-photo img {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center;
-      filter: none;
-      transform: none;
-      opacity: 1;
-      transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1), filter 220ms ease;
-    }
-    .collage-photo.is-left img { object-position: 50% 42%; }
-    .collage-photo.is-center img { object-position: 50% 44%; }
-    .collage-photo.is-right img { object-position: 48% 42%; }
-    .panel-collage:hover .collage-photo img {
-      transform: scale(1.025);
-      filter: saturate(1.04) contrast(1.02);
     }
 
     .panel-heading {
@@ -1003,23 +928,6 @@
       .artist img {
         height: 260px;
       }
-      .panel-collage {
-        gap: 6px;
-        padding: 12px;
-      }
-      .collage-photo {
-        border-radius: 6px;
-      }
-      .collage-photo.is-left,
-      .collage-photo.is-right {
-        grid-row: 2;
-      }
-      .collage-photo.is-left { grid-column: 1 / 3; }
-      .collage-photo.is-right { grid-column: 3 / 5; }
-      .collage-photo.is-center {
-        grid-column: 2 / 4;
-        grid-row: 1;
-      }
       .grid-2,
       .names,
       .detail-grid {
@@ -1084,11 +992,7 @@
     <section class="left-panel" aria-label="Gala images">
       <div class="panel-slides" aria-hidden="true">
         <img class="panel-slide is-active" data-slide="slide-1" src="slide-1.png" alt="">
-        <div class="panel-slide panel-collage" data-slide="slide-2">
-          <div class="collage-photo is-left"><img src="3-for-slide.png" alt=""></div>
-          <div class="collage-photo is-center"><img src="2-for-slide.png" alt=""></div>
-          <div class="collage-photo is-right"><img src="1-for-slide.png" alt=""></div>
-        </div>
+        <img class="panel-slide" data-slide="slide-2" src="slide-2-v2.png" alt="">
         <img class="panel-slide" data-slide="slide-3" src="slide-3.png" alt="">
         <img class="panel-slide" data-slide="slide-4" src="slide-4.png" alt="">
       </div>
