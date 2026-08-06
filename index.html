@@ -4,18 +4,18 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AMPLIFY - San Diego Symphony Gala</title>
-  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
   <style>
     @font-face {
       font-family: "montserrat-itinerary";
-      src: url("montserrat-itinerary.woff2") format("woff2");
+      src: url("assets/fonts/montserrat-itinerary.woff2") format("woff2");
       font-weight: 100 900;
       font-style: normal;
       font-display: swap;
     }
     @font-face {
       font-family: "montserrat-itinerary";
-      src: url("montserrat-itinerary.woff2") format("woff2");
+      src: url("assets/fonts/montserrat-itinerary.woff2") format("woff2");
       font-weight: 100 900;
       font-style: oblique 0deg 10deg;
       font-display: swap;
@@ -361,7 +361,7 @@
       pointer-events: none;
       background:
         linear-gradient(180deg, rgba(5, 28, 34, 0.24), rgba(5, 28, 34, 0.42)),
-        url("slide-3.png") center / cover no-repeat;
+        url("assets/images/slide-3.png") center / cover no-repeat;
       filter: blur(12px) saturate(0.82) contrast(0.96);
       transform: scale(1.06);
     }
@@ -1057,7 +1057,7 @@
 </head>
 <body class="intro-open">
   <button class="cover-intro is-loading" type="button" aria-label="Open the AMPLIFY gala experience">
-    <img class="cover-intro-image" src="cover.png" alt="" aria-hidden="true">
+    <img class="cover-intro-image" src="assets/images/cover.png" alt="" aria-hidden="true">
     <span class="cover-loader" aria-live="polite">Loading experience</span>
     <span class="cover-intro-content">
       <span class="cover-intro-kicker">San Diego Symphony Gala</span>
@@ -1066,7 +1066,7 @@
   </button>
   <header class="topbar">
     <a class="brand" href="#slide-1">
-      <img src="logo-SDS-Horizontal-Black.png" alt="San Diego Symphony" class="brand-logo">
+      <img src="assets/images/logo-SDS-Horizontal-Black.png" alt="San Diego Symphony" class="brand-logo">
     </a>
     <nav class="top-nav" aria-label="Sticky navigation">
       <a href="#slide-1">The Gala</a>
@@ -1098,14 +1098,14 @@
   <main class="split-shell">
     <section class="left-panel" aria-label="Gala images">
       <div class="panel-slides" aria-hidden="true">
-        <img class="panel-slide is-active" data-slide="slide-1" src="slide-1.png" alt="">
+        <img class="panel-slide is-active" data-slide="slide-1" src="assets/images/slide-1.png" alt="">
         <div class="panel-slide panel-collage" data-slide="slide-2">
-          <div class="collage-photo is-left"><img src="3-for-slide.png" alt=""></div>
-          <div class="collage-photo is-center"><img src="2-for-slide.png" alt=""></div>
-          <div class="collage-photo is-right"><img src="1-for-slide.png" alt=""></div>
+          <div class="collage-photo is-left"><img src="assets/images/3-for-slide.png" alt=""></div>
+          <div class="collage-photo is-center"><img src="assets/images/2-for-slide.png" alt=""></div>
+          <div class="collage-photo is-right"><img src="assets/images/1-for-slide.png" alt=""></div>
         </div>
-        <img class="panel-slide" data-slide="slide-3" src="slide-3.png" alt="">
-        <img class="panel-slide" data-slide="slide-4" src="slide-4.png" alt="">
+        <img class="panel-slide" data-slide="slide-3" src="assets/images/slide-3.png" alt="">
+        <img class="panel-slide" data-slide="slide-4" src="assets/images/slide-4.png" alt="">
       </div>
     </section>
 
@@ -1117,7 +1117,7 @@
           <p class="lead">Saturday, November 21 at Jacobs Music Center.</p>
           <p class="lead" style="margin-top: -12px; margin-bottom: 24px; font-size: 1.1rem; font-weight: 400; color: var(--ink);">5:00 PM</p>
           <p>A great symphony orchestra is a powerful act of amplification. Individual musicians come together to create something greater than themselves—performances that move, inspire, and uplift audiences. <strong>AMPLIFY</strong>, the San Diego Symphony Gala, celebrates that same spirit, bringing together remarkable artists, visionary supporters, and a shared belief in the power of music to transform lives. As a sponsor of this year’s Gala, you become part of that amplification. Your generosity is the key to ensuring that our music, mission, and legacy continue to enrich our community and inspire generations to come.</p>
-          <img class="section-logo" src="logo-SDS-Horizontal-Black.png" alt="San Diego Symphony">
+          <img class="section-logo" src="assets/images/logo-SDS-Horizontal-Black.png" alt="San Diego Symphony">
         </div>
         <div class="copy" style="margin-top: 24px;">
           <h3 class="section-subheading">
@@ -1165,15 +1165,15 @@
         </div>
         <div class="artist-grid" style="margin-top:20px">
           <article class="artist">
-            <img src="1.png" alt="Singer Isabel Leonard">
+            <img src="assets/images/1.png" alt="Singer Isabel Leonard">
             <span>Singer Isabel Leonard</span>
           </article>
           <article class="artist">
-            <img src="2.png" alt="Music and Artistic Director Rafael Payare">
+            <img src="assets/images/2.png" alt="Music and Artistic Director Rafael Payare">
             <span>Music and Artistic Director Rafael Payare</span>
           </article>
           <article class="artist">
-            <img src="3.png" alt="Singer-songwriter Jason Mraz">
+            <img src="assets/images/3.png" alt="Singer-songwriter Jason Mraz">
             <span>Singer-songwriter Jason Mraz</span>
           </article>
         </div>
@@ -1191,7 +1191,6 @@
             <div class="accordion-panel">
               <div class="accordion-content">
                 <div class="accordion-inner">
-                  <!-- Add a single-ticket option here after August 1, when tickets go on sale. -->
                   <div class="tier-grid">
                     <article class="tier">
                       <div class="tier-top"><h3>Fortissimo Level</h3><div class="price">$50,000</div></div>
@@ -1227,6 +1226,47 @@
                   </div>
                   <p class="note">Fair Market Value per table is $5,000 or $500 per person. Additional tables may be purchased and placed adjacently.</p>
                   <p class="note">Contact Special Events at <a class="contact-link" href="mailto:Specialevents@sandiegosymphony.org">Specialevents@sandiegosymphony.org</a>.</p>
+                </div>
+              </div>
+            </div>
+          </article>
+          <article class="accordion open">
+            <button class="accordion-toggle" type="button" aria-expanded="true">
+              <span class="accordion-title"><small>Individual Ticket Levels &amp; Benefits</small></span>
+              <span class="accordion-meta">Single Guest <span class="chevron"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></span>
+            </button>
+            <div class="accordion-panel">
+              <div class="accordion-content">
+                <div class="accordion-inner">
+                  <div class="tier-grid">
+                    <article class="tier">
+                      <div class="tier-top"><h3>Fortissimo Level</h3><div class="price">$5,000</div></div>
+                      <ul class="benefits">
+                        <li>Prominent listing in Gala program and signage at the event</li>
+                        <li>Includes cocktail reception, concert, dinner, and after-party</li>
+                        <li>Valet parking with priority retrieval at the end of the evening</li>
+                        <li>Premier dinner and concert seating</li>
+                      </ul>
+                    </article>
+                    <article class="tier">
+                      <div class="tier-top"><h3>Forte Level</h3><div class="price">$3,500</div></div>
+                      <ul class="benefits">
+                        <li>Preferred listing in Gala program and signage at the event</li>
+                        <li>Includes cocktail reception, concert, dinner, and after-party</li>
+                        <li>Valet parking</li>
+                        <li>Premium dinner and concert seating</li>
+                      </ul>
+                    </article>
+                    <article class="tier">
+                      <div class="tier-top"><h3>Mezzo Forte Level</h3><div class="price">$2,000</div></div>
+                      <ul class="benefits">
+                        <li>Listing in Gala program and signage at the event</li>
+                        <li>Includes cocktail reception, concert, dinner, and after-party</li>
+                        <li>Valet parking</li>
+                        <li>Dinner and concert seating</li>
+                      </ul>
+                    </article>
+                  </div>
                 </div>
               </div>
             </div>
