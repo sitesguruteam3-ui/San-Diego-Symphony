@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>AMPLIFY Admin — Ticket Visibility</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <style>
+    @font-face {
+      font-family: "Montserrat Itinerary";
+      src: url("assets/fonts/montserrat-itinerary.woff2") format("woff2");
+      font-display: swap;
+    }
+    :root {
+      color-scheme: light;
+      --bg: #f4f6f8;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --ink: #0f172a;
+      --text: #334155;
+      --muted: #64748b;
+      --line: #dbe2ea;
+      --gold: #a66a1f;
+      --gold-dark: #7d4c12;
+      --success: #087a55;
+      --success-soft: #e8f7f1;
+      --warning: #8a5700;
+      --warning-soft: #fff7e6;
+      --danger: #b42318;
+      --ring: #245ea8;
+      --shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
+      font-family: "Montserrat Itinerary", Montserrat, Inter, system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      min-height: 100dvh;
+      background:
+        radial-gradient(circle at 90% 0%, rgba(166, 106, 31, 0.12), transparent 30rem),
+        var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+    }
+    button, input { font: inherit; }
+    button, a { touch-action: manipulation; }
+    a { color: inherit; }
+    .skip-link {
+      position: fixed;
+      top: 8px;
+      left: 8px;
+      z-index: 10;
+      padding: 10px 14px;
+      border-radius: 8px;
+      background: var(--ink);
+      color: white;
+      transform: translateY(-150%);
+    }
+    .skip-link:focus { transform: translateY(0); }
+    .topbar {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 14px clamp(20px, 4vw, 56px);
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(14px);
+    }
+    .brand { display: flex; align-items: center; gap: 18px; min-width: 0; }
+    .brand img { width: min(220px, 42vw); height: auto; }
+    .brand-divider { width: 1px; height: 28px; background: var(--line); }
+    .brand-label { color: var(--muted); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+    .site-link {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 14px;
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 0.88rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background 180ms ease, color 180ms ease;
+    }
+    .site-link:hover { background: var(--surface-soft); color: var(--ink); }
+    .site-link svg { width: 18px; height: 18px; }
+    .top-actions { display: flex; align-items: center; gap: 8px; }
+    .sign-out { border: 0; background: transparent; }
+    .login-shell { width: min(460px, calc(100% - 32px)); margin: 0 auto; padding: clamp(52px, 10vw, 100px) 0; }
+    .login-card { padding: clamp(24px, 5vw, 36px); }
+    .login-mark { width: 48px; height: 48px; display: grid; place-items: center; margin-bottom: 28px; border-radius: 14px; background: var(--ink); color: white; }
+    .login-mark svg { width: 23px; height: 23px; }
+    .login-card h1 { font-size: clamp(2rem, 7vw, 3rem); }
+    .login-card .intro { margin-bottom: 28px; }
+    .password-wrap { position: relative; }
+    .password-wrap input { padding-right: 76px; }
+    .password-toggle { position: absolute; top: 3px; right: 3px; min-width: 64px; min-height: 44px; border: 0; border-radius: 8px; background: transparent; color: var(--text); cursor: pointer; font-size: 0.78rem; font-weight: 800; }
+    .password-toggle:hover { background: var(--surface-soft); color: var(--ink); }
+    .login-button { width: 100%; margin-top: 20px; }
+    main { width: min(1120px, calc(100% - 32px)); margin: 0 auto; padding: clamp(40px, 7vw, 76px) 0 64px; }
+    .eyebrow { margin: 0 0 12px; color: var(--gold-dark); font-size: 0.75rem; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; }
+    h1 { max-width: 760px; margin: 0; font-size: clamp(2rem, 5vw, 3.8rem); letter-spacing: -0.045em; line-height: 1.05; }
+    .intro { max-width: 680px; margin: 18px 0 0; color: var(--text); font-size: 1rem; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr); gap: 24px; margin-top: 40px; align-items: start; }
+    .card { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
+    .card-header { padding: 24px 24px 20px; border-bottom: 1px solid var(--line); }
+    .card-header h2 { margin: 0; font-size: 1.15rem; letter-spacing: -0.015em; }
+    .card-header p { margin: 6px 0 0; color: var(--muted); font-size: 0.88rem; }
+    .form-body { padding: 24px; }
+    .field { margin: 0; }
+    label { display: block; margin-bottom: 8px; color: var(--ink); font-size: 0.86rem; font-weight: 750; }
+    input[type="datetime-local"], input[type="password"] {
+      width: 100%;
+      min-height: 50px;
+      padding: 10px 14px;
+      border: 1px solid #aeb9c6;
+      border-radius: 10px;
+      background: white;
+      color: var(--ink);
+      font-size: 1rem;
+      transition: border-color 180ms ease, box-shadow 180ms ease;
+    }
+    input:focus-visible, button:focus-visible, a:focus-visible { outline: 3px solid rgba(36, 94, 168, 0.28); outline-offset: 2px; }
+    input:focus { border-color: var(--ring); box-shadow: 0 0 0 3px rgba(36, 94, 168, 0.12); }
+    .helper { margin: 8px 0 0; color: var(--muted); font-size: 0.82rem; }
+    .preview { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 22px; }
+    .preview-item { min-height: 86px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-soft); }
+    .preview-item span { display: block; color: var(--muted); font-size: 0.7rem; font-weight: 750; letter-spacing: 0.1em; text-transform: uppercase; }
+    .preview-item strong { display: block; margin-top: 6px; overflow-wrap: anywhere; font-size: 0.92rem; font-variant-numeric: tabular-nums; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+    .button {
+      min-height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 0 18px;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.86rem;
+      font-weight: 800;
+      transition: background 180ms ease, border-color 180ms ease, color 180ms ease, box-shadow 180ms ease;
+    }
+    .button svg { width: 18px; height: 18px; }
+    .button-primary { background: var(--ink); color: white; }
+    .button-primary:hover { background: #243247; box-shadow: 0 8px 18px rgba(15, 23, 42, 0.16); }
+    .button-secondary { border-color: var(--line); background: white; color: var(--ink); }
+    .button-secondary:hover { border-color: #aeb9c6; background: var(--surface-soft); }
+    .button:disabled { cursor: wait; opacity: 0.58; box-shadow: none; }
+    .status-card { overflow: hidden; }
+    .status-block { padding: 24px; }
+    .status-line { display: flex; align-items: center; gap: 10px; }
+    .status-dot { width: 10px; height: 10px; border-radius: 999px; background: var(--warning); box-shadow: 0 0 0 5px var(--warning-soft); }
+    .status-line.is-visible .status-dot { background: var(--success); box-shadow: 0 0 0 5px var(--success-soft); }
+    .status-label { font-size: 1.15rem; font-weight: 850; }
+    .countdown { margin: 16px 0 0; color: var(--text); font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+    .scope-note { margin-top: 20px; padding: 16px; border-radius: 12px; background: var(--warning-soft); color: #614000; font-size: 0.82rem; }
+    .scope-note strong { display: block; margin-bottom: 4px; }
+    .toast { min-height: 24px; margin: 16px 0 0; color: var(--success); font-size: 0.86rem; font-weight: 700; }
+    @media (max-width: 760px) {
+      .brand-divider, .brand-label { display: none; }
+      .site-link:not(.sign-out) span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+      .layout { grid-template-columns: 1fr; }
+      .preview { grid-template-columns: 1fr; }
+      .actions { flex-direction: column; }
+      .button { width: 100%; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
+  </style>
+</head>
+<body>
+  <a class="skip-link" id="skip-link" href="#login-view">Skip to sign in</a>
+  <header class="topbar">
+    <div class="brand">
+      <img src="assets/images/logo-SDS-Horizontal-Black.png" alt="San Diego Symphony">
+      <span class="brand-divider" aria-hidden="true"></span>
+      <span class="brand-label">Admin</span>
+    </div>
+    <div class="top-actions">
+      <button class="site-link sign-out" id="sign-out" type="button" hidden><span>Sign out</span></button>
+      <a class="site-link" href="index.html" target="_blank" rel="noopener">
+        <span>Preview website</span>
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+      </a>
+    </div>
+  </header>
+
+  <section class="login-shell" id="login-view" aria-labelledby="login-title">
+    <form class="card login-card" id="login-form">
+      <div class="login-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+      <p class="eyebrow">AMPLIFY Administration</p>
+      <h1 id="login-title">Admin sign in</h1>
+      <p class="intro">Enter the dashboard password to manage ticket visibility.</p>
+      <label for="login-password">Password</label>
+      <div class="password-wrap">
+        <input id="login-password" type="password" required autocomplete="current-password" aria-describedby="login-error">
+        <button class="password-toggle" id="password-toggle" type="button" aria-label="Show password">Show</button>
+      </div>
+      <p class="helper" id="login-error" role="alert"></p>
+      <button class="button button-primary login-button" type="submit">Sign in</button>
+    </form>
+  </section>
+
+  <main id="main" hidden>
+    <p class="eyebrow">AMPLIFY Gala Controls</p>
+    <h1>Ticket visibility schedule</h1>
+    <p class="intro">Choose when the “Individual Ticket Levels” tab becomes visible. All scheduling is entered in Pacific Time and converted to an exact UTC launch time.</p>
+
+    <div class="layout">
+      <section class="card" aria-labelledby="schedule-title">
+        <div class="card-header">
+          <h2 id="schedule-title">Individual Ticket Levels</h2>
+          <p>Visibility control for the public gala landing page.</p>
+        </div>
+        <form class="form-body" id="schedule-form" novalidate>
+          <div class="field">
+            <label for="launch-time">Visible from (Pacific Time)</label>
+            <input id="launch-time" name="launch-time" type="datetime-local" required aria-describedby="launch-help launch-error">
+            <p class="helper" id="launch-help">Daylight-saving time is calculated for America/Los_Angeles.</p>
+            <p class="helper" id="launch-error" role="alert"></p>
+          </div>
+
+          <div class="preview" aria-live="polite">
+            <div class="preview-item"><span>Pacific</span><strong id="pacific-preview">—</strong></div>
+            <div class="preview-item"><span>UTC deployment value</span><strong id="utc-preview">—</strong></div>
+          </div>
+
+          <div class="actions">
+            <button class="button button-primary" type="submit">
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
+              Publish schedule
+            </button>
+            <button class="button button-secondary" id="download-config" type="button">
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14"/></svg>
+              Download site-config.js
+            </button>
+          </div>
+          <p class="toast" id="save-status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <aside class="card status-card" aria-labelledby="visibility-title">
+        <div class="card-header"><h2 id="visibility-title">Current preview status</h2></div>
+        <div class="status-block">
+          <div class="status-line" id="status-line"><span class="status-dot" aria-hidden="true"></span><span class="status-label" id="visibility-status">Hidden</span></div>
+          <p class="countdown" id="countdown">Calculating schedule…</p>
+          <div class="scope-note"><strong>Global schedule</strong>Publishing writes the schedule to Neon through a protected Netlify Function. The downloaded config remains available as an emergency static fallback.</div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script src="site-config.js"></script>
+  <script>
+    const TIME_ZONE = 'America/Los_Angeles';
+    const form = document.getElementById('schedule-form');
+    const input = document.getElementById('launch-time');
+    const pacificPreview = document.getElementById('pacific-preview');
+    const utcPreview = document.getElementById('utc-preview');
+    const errorMessage = document.getElementById('launch-error');
+    const saveStatus = document.getElementById('save-status');
+    const visibilityStatus = document.getElementById('visibility-status');
+    const statusLine = document.getElementById('status-line');
+    const countdown = document.getElementById('countdown');
+    const downloadButton = document.getElementById('download-config');
+    const loginView = document.getElementById('login-view');
+    const loginForm = document.getElementById('login-form');
+    const loginPassword = document.getElementById('login-password');
+    const loginError = document.getElementById('login-error');
+    const passwordToggle = document.getElementById('password-toggle');
+    const dashboard = document.getElementById('main');
+    const signOutButton = document.getElementById('sign-out');
+    const skipLink = document.getElementById('skip-link');
+    const SESSION_KEY = 'amplify.adminSessionKey';
+    let activeAdminKey = '';
+
+    const zoneFormatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: TIME_ZONE, year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23'
+    });
+    const displayFormatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: TIME_ZONE,
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+      hour: 'numeric', minute: '2-digit', timeZoneName: 'short'
+    });
+
+    function partsInPacific(date) {
+      return Object.fromEntries(zoneFormatter.formatToParts(date).filter((part) => part.type !== 'literal').map((part) => [part.type, Number(part.value)]));
+    }
+
+    function pacificInputToDate(value) {
+      const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/.exec(value);
+      if (!match) return null;
+      const desired = match.slice(1).map(Number);
+      const wallClockAsUtc = Date.UTC(desired[0], desired[1] - 1, desired[2], desired[3], desired[4]);
+      let result = new Date(wallClockAsUtc);
+      for (let attempt = 0; attempt < 3; attempt += 1) {
+        const actual = partsInPacific(result);
+        const actualAsUtc = Date.UTC(actual.year, actual.month - 1, actual.day, actual.hour, actual.minute, actual.second);
+        result = new Date(result.getTime() + wallClockAsUtc - actualAsUtc);
+      }
+      const verified = partsInPacific(result);
+      const valid = verified.year === desired[0] && verified.month === desired[1] && verified.day === desired[2] && verified.hour === desired[3] && verified.minute === desired[4];
+      return valid ? result : null;
+    }
+
+    function dateToPacificInput(date) {
+      const parts = partsInPacific(date);
+      const pad = (value) => String(value).padStart(2, '0');
+      return `${parts.year}-${pad(parts.month)}-${pad(parts.day)}T${pad(parts.hour)}:${pad(parts.minute)}`;
+    }
+
+    function selectedDate() { return pacificInputToDate(input.value); }
+
+    function refresh() {
+      const date = selectedDate();
+      if (!date) {
+        pacificPreview.textContent = 'Invalid or unavailable local time';
+        utcPreview.textContent = '—';
+        errorMessage.textContent = input.value ? 'Choose a valid Pacific date and time.' : '';
+        return;
+      }
+      errorMessage.textContent = '';
+      pacificPreview.textContent = displayFormatter.format(date);
+      utcPreview.textContent = date.toISOString();
+      const isVisible = Date.now() >= date.getTime();
+      statusLine.classList.toggle('is-visible', isVisible);
+      visibilityStatus.textContent = isVisible ? 'Visible' : 'Hidden';
+      if (isVisible) {
+        countdown.textContent = 'The tab is visible according to this schedule.';
+      } else {
+        const remaining = date.getTime() - Date.now();
+        const days = Math.floor(remaining / 86400000);
+        const hours = Math.floor((remaining % 86400000) / 3600000);
+        const minutes = Math.floor((remaining % 3600000) / 60000);
+        countdown.textContent = `Becomes visible in ${days}d ${hours}h ${minutes}m.`;
+      }
+    }
+
+    const initialDate = new Date(window.AMPLIFY_CONFIG?.individualTicketsLaunchAt || '2026-08-11T07:00:00.000Z');
+    input.value = dateToPacificInput(initialDate);
+    refresh();
+    window.setInterval(refresh, 30000);
+    input.addEventListener('input', refresh);
+
+    async function loadPublishedSchedule() {
+      saveStatus.textContent = 'Loading the published schedule…';
+      try {
+        const response = await fetch('/.netlify/functions/ticket-schedule', { cache: 'no-store' });
+        if (!response.ok) throw new Error(`Request failed (${response.status}).`);
+        const data = await response.json();
+        const date = new Date(data.individualTicketsLaunchAt);
+        if (!Number.isFinite(date.getTime())) throw new Error('The published schedule is invalid.');
+        input.value = dateToPacificInput(date);
+        saveStatus.textContent = data.updatedAt ? 'Published schedule loaded from Neon.' : 'Default schedule loaded; no database update has been published yet.';
+        refresh();
+      } catch (error) {
+        saveStatus.textContent = 'Could not reach Neon. Showing the static fallback schedule.';
+      }
+    }
+
+    async function verifyPassword(password) {
+      const response = await fetch('/.netlify/functions/ticket-schedule', {
+        method: 'POST',
+        headers: { 'x-admin-key': password }
+      });
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || 'Unable to sign in. Try again.');
+      }
+    }
+
+    function showDashboard() {
+      loginView.hidden = true;
+      dashboard.hidden = false;
+      signOutButton.hidden = false;
+      skipLink.href = '#main';
+      skipLink.textContent = 'Skip to settings';
+      loadPublishedSchedule();
+    }
+
+    passwordToggle.addEventListener('click', () => {
+      const show = loginPassword.type === 'password';
+      loginPassword.type = show ? 'text' : 'password';
+      passwordToggle.textContent = show ? 'Hide' : 'Show';
+      passwordToggle.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+      loginPassword.focus();
+    });
+
+    loginForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const button = loginForm.querySelector('[type="submit"]');
+      button.disabled = true;
+      button.textContent = 'Signing in…';
+      loginError.textContent = '';
+      try {
+        await verifyPassword(loginPassword.value);
+        activeAdminKey = loginPassword.value;
+        sessionStorage.setItem(SESSION_KEY, activeAdminKey);
+        loginPassword.value = '';
+        showDashboard();
+      } catch (error) {
+        loginError.textContent = error.message;
+        loginPassword.focus();
+      } finally {
+        button.disabled = false;
+        button.textContent = 'Sign in';
+      }
+    });
+
+    signOutButton.addEventListener('click', () => {
+      activeAdminKey = '';
+      sessionStorage.removeItem(SESSION_KEY);
+      dashboard.hidden = true;
+      signOutButton.hidden = true;
+      loginView.hidden = false;
+      skipLink.href = '#login-view';
+      skipLink.textContent = 'Skip to sign in';
+      loginPassword.focus();
+    });
+
+    async function restoreSession() {
+      const savedKey = sessionStorage.getItem(SESSION_KEY);
+      if (!savedKey) { loginPassword.focus(); return; }
+      try {
+        await verifyPassword(savedKey);
+        activeAdminKey = savedKey;
+        showDashboard();
+      } catch (error) {
+        sessionStorage.removeItem(SESSION_KEY);
+        loginPassword.focus();
+      }
+    }
+
+    restoreSession();
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const date = selectedDate();
+      if (!date) { input.focus(); refresh(); return; }
+      const submitButton = form.querySelector('[type="submit"]');
+      submitButton.disabled = true;
+      submitButton.textContent = 'Publishing…';
+      saveStatus.textContent = 'Saving the global schedule…';
+      try {
+        const response = await fetch('/.netlify/functions/ticket-schedule', {
+          method: 'PUT',
+          headers: {
+            'content-type': 'application/json',
+            'x-admin-key': activeAdminKey
+          },
+          body: JSON.stringify({ individualTicketsLaunchAt: date.toISOString() })
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || `Request failed (${response.status}).`);
+        saveStatus.textContent = 'Published. The new schedule now applies to all visitors.';
+      } catch (error) {
+        saveStatus.textContent = `Not published: ${error.message}`;
+      } finally {
+        submitButton.disabled = false;
+        submitButton.innerHTML = '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg> Publish schedule';
+      }
+      refresh();
+    });
+
+    downloadButton.addEventListener('click', () => {
+      const date = selectedDate();
+      if (!date) { input.focus(); refresh(); return; }
+      const contents = `window.AMPLIFY_CONFIG = Object.freeze({\n  individualTicketsLaunchAt: '${date.toISOString()}'\n});\n`;
+      const url = URL.createObjectURL(new Blob([contents], { type: 'text/javascript' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'site-config.js';
+      link.click();
+      URL.revokeObjectURL(url);
+      saveStatus.textContent = 'Configuration downloaded. Replace the deployed site-config.js to publish it.';
+    });
+  </script>
+</body>
+</html>

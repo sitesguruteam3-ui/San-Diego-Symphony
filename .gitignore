@@ -1,0 +1,4 @@
+.env
+.netlify
+.npm-cache
+node_modules
