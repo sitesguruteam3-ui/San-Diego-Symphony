@@ -897,6 +897,12 @@
       color: var(--muted);
       font-size: 0.82rem;
     }
+    .availability-note {
+      padding-left: 12px;
+      border-left: 3px solid var(--gold);
+      color: var(--ink);
+      font-weight: 650;
+    }
     .recognition-photo {
       margin: 20px 0 0;
       display: flex;
@@ -1294,6 +1300,7 @@
                     </article>
             </div>
             <p class="note">Fair Market Value per table is $5,000 or $500 per person. Additional tables may be purchased and placed adjacently.</p>
+            <p class="note availability-note" id="individual-purchase-note" hidden>Individual tickets will be available for purchase beginning August 12.</p>
             <p class="note">Contact Special Events at <a class="contact-link" href="mailto:Specialevents@sandiegosymphony.org">Specialevents@sandiegosymphony.org</a>.</p>
           </div>
           <div class="tier-tabpanel" id="individual-panel" role="tabpanel" aria-labelledby="individual-tab" tabindex="0" hidden>
@@ -1552,8 +1559,11 @@
 
     let individualTicketsLaunchAt = getIndividualTicketsLaunchAt();
     const individualTicketsTab = document.getElementById('individual-tab');
+    const individualPurchaseNote = document.getElementById('individual-purchase-note');
     const tierTablist = document.querySelector('.tier-tablist');
     let individualTicketsTimer = null;
+    let individualPurchaseNoteTimer = null;
+    const individualPurchaseOpensAt = Date.parse('2026-08-12T07:00:00Z');
 
     function applyBookNowUrl(value) {
       if (typeof value !== 'string' || !value.startsWith('https://')) return;
@@ -1561,6 +1571,21 @@
     }
 
     applyBookNowUrl(window.AMPLIFY_CONFIG?.bookNowUrl);
+
+    function updateIndividualPurchaseNote() {
+      if (!individualPurchaseNote) return;
+      if (individualPurchaseNoteTimer) window.clearTimeout(individualPurchaseNoteTimer);
+      const purchaseIsOpen = Date.now() >= individualPurchaseOpensAt;
+      individualPurchaseNote.hidden = purchaseIsOpen;
+      if (!purchaseIsOpen) {
+        individualPurchaseNoteTimer = window.setTimeout(
+          () => { individualPurchaseNote.hidden = true; },
+          individualPurchaseOpensAt - Date.now()
+        );
+      }
+    }
+
+    updateIndividualPurchaseNote();
 
     function setIndividualTicketVisibility(isVisible) {
       if (!individualTicketsTab) return;
