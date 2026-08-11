@@ -1441,6 +1441,7 @@
     const menuButton = document.querySelector('.menu-btn');
     const accordions = Array.from(document.querySelectorAll('.accordion'));
     const tierTabs = Array.from(document.querySelectorAll('.tier-tab'));
+    const bookNowButtons = Array.from(document.querySelectorAll('.book-btn'));
     const slides = Array.from(document.querySelectorAll('.panel-slide'));
     const coverIntro = document.querySelector('.cover-intro');
     const coverIntroImage = document.querySelector('.cover-intro-image');
@@ -1554,6 +1555,13 @@
     const tierTablist = document.querySelector('.tier-tablist');
     let individualTicketsTimer = null;
 
+    function applyBookNowUrl(value) {
+      if (typeof value !== 'string' || !value.startsWith('https://')) return;
+      bookNowButtons.forEach((button) => button.href = value);
+    }
+
+    applyBookNowUrl(window.AMPLIFY_CONFIG?.bookNowUrl);
+
     function setIndividualTicketVisibility(isVisible) {
       if (!individualTicketsTab) return;
       individualTicketsTab.hidden = !isVisible;
@@ -1584,6 +1592,7 @@
         const timestamp = Date.parse(data.individualTicketsLaunchAt);
         if (!Number.isFinite(timestamp)) throw new Error('Schedule response is invalid.');
         individualTicketsLaunchAt = timestamp;
+        applyBookNowUrl(data.bookNowUrl);
         revealScheduledTicketTab();
       } catch (error) {
         console.warn('Using the static ticket schedule fallback.', error);
