@@ -379,6 +379,15 @@
       border-radius: 10px;
       box-shadow: 0 16px 36px rgba(1, 15, 19, 0.34);
     }
+    .collage-photo-link {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    .collage-photo-link:focus-visible {
+      outline: 3px solid #ffffff;
+      outline-offset: -5px;
+    }
     .collage-photo.is-left {
       grid-column: 1 / 3;
       grid-row: 2;
@@ -560,6 +569,15 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
+    }
+    .artist-photo-link {
+      display: block;
+      border-radius: 8px;
+    }
+    .artist-photo-link img { display: block; }
+    .artist-photo-link:focus-visible {
+      outline: 3px solid rgba(15, 23, 42, 0.3);
+      outline-offset: 3px;
     }
     .artist img {
       width: 100%;
@@ -1075,7 +1093,7 @@
       <a href="#slide-4">Give &amp; Underwrite</a>
     </nav>
     <div>
-      <a class="book-btn" href="https://purchasing.sandiegosymphony.org/10190/10191" target="_blank" rel="noopener noreferrer">Book Now</a>
+      <a class="book-btn" href="https://purchasing.sandiegosymphony.org/10190/10191" target="_blank" rel="noopener noreferrer">Purchase Now</a>
       <button class="menu-btn" type="button" aria-label="Open menu" aria-expanded="false">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -1097,12 +1115,12 @@
 
   <main class="split-shell">
     <section class="left-panel" aria-label="Gala images">
-      <div class="panel-slides" aria-hidden="true">
+      <div class="panel-slides">
         <img class="panel-slide is-active" data-slide="slide-1" src="assets/images/slide-1.png" alt="">
         <div class="panel-slide panel-collage" data-slide="slide-2">
-          <div class="collage-photo is-left"><img src="assets/images/3-for-slide.png" alt=""></div>
-          <div class="collage-photo is-center"><img src="assets/images/2-for-slide.png" alt=""></div>
-          <div class="collage-photo is-right"><img src="assets/images/1-for-slide.png" alt=""></div>
+          <div class="collage-photo is-left"><a class="collage-photo-link" href="https://jasonmraz.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit Jason Mraz's website" tabindex="-1"><img src="assets/images/3-for-slide.png" alt="Singer-songwriter Jason Mraz"></a></div>
+          <div class="collage-photo is-center"><a class="collage-photo-link" href="https://rafaelpayare.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit Rafael Payare's website" tabindex="-1"><img src="assets/images/2-for-slide.png" alt="Music and Artistic Director Rafael Payare"></a></div>
+          <div class="collage-photo is-right"><a class="collage-photo-link" href="https://prometheanartists.com/isabel-leonard" target="_blank" rel="noopener noreferrer" aria-label="Visit Isabel Leonard's website" tabindex="-1"><img src="assets/images/1-for-slide.png" alt="Singer Isabel Leonard"></a></div>
         </div>
         <img class="panel-slide" data-slide="slide-3" src="assets/images/slide-3.png" alt="">
         <img class="panel-slide" data-slide="slide-4" src="assets/images/slide-4.png" alt="">
@@ -1165,15 +1183,15 @@
         </div>
         <div class="artist-grid" style="margin-top:20px">
           <article class="artist">
-            <img src="assets/images/1.png" alt="Singer Isabel Leonard">
+            <a class="artist-photo-link" href="https://prometheanartists.com/isabel-leonard" target="_blank" rel="noopener noreferrer" aria-label="Visit Isabel Leonard's website"><img src="assets/images/1.png" alt="Singer Isabel Leonard"></a>
             <span>Singer Isabel Leonard</span>
           </article>
           <article class="artist">
-            <img src="assets/images/2.png" alt="Music and Artistic Director Rafael Payare">
+            <a class="artist-photo-link" href="https://rafaelpayare.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit Rafael Payare's website"><img src="assets/images/2.png" alt="Music and Artistic Director Rafael Payare"></a>
             <span>Music and Artistic Director Rafael Payare</span>
           </article>
           <article class="artist">
-            <img src="assets/images/3.png" alt="Singer-songwriter Jason Mraz">
+            <a class="artist-photo-link" href="https://jasonmraz.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit Jason Mraz's website"><img src="assets/images/3.png" alt="Singer-songwriter Jason Mraz"></a>
             <span>Singer-songwriter Jason Mraz</span>
           </article>
         </div>
@@ -1181,7 +1199,7 @@
 
       <article class="section section-anchor" id="slide-3">
         <p class="kicker">Tables & Leadership</p>
-        <h2>Host a Table</h2>
+        <h2>Host a Table/Ticket Levels</h2>
         <div class="accordion-list">
           <article class="accordion open">
             <button class="accordion-toggle" type="button" aria-expanded="true">
@@ -1372,7 +1390,7 @@
       <strong>Tables from $20,000</strong>
       <span>Saturday, November 21 - Jacobs Music Center</span>
     </div>
-    <a class="book-btn" href="https://purchasing.sandiegosymphony.org/10190/10191" target="_blank" rel="noopener noreferrer">Book Now</a>
+    <a class="book-btn" href="https://purchasing.sandiegosymphony.org/10190/10191" target="_blank" rel="noopener noreferrer">Purchase Now</a>
   </div>
 
   <script>
@@ -1532,6 +1550,9 @@
 
       // Stacking effect: next image slides up and covers the current one
       slides.forEach((slide, i) => {
+        const slideLinks = slide.querySelectorAll('a');
+        slide.setAttribute('aria-hidden', String(i !== activeIdx));
+        slideLinks.forEach((link) => link.tabIndex = i === activeIdx ? 0 : -1);
         if (i <= activeIdx) {
           // Current and all previous slides: stay in place
           slide.style.transform = `translate3d(0, 0%, 0) scale(1.03)`;

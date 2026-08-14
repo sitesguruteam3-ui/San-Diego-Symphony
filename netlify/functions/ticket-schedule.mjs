@@ -70,7 +70,7 @@ export async function handler(event) {
         bookNowUrl = new URL(body.bookNowUrl);
         if (bookNowUrl.protocol !== 'https:') throw new Error('HTTPS required');
       } catch {
-        return response(400, { error: 'A valid HTTPS Book Now URL is required.' });
+        return response(400, { error: 'A valid HTTPS Purchase Now URL is required.' });
       }
 
       const normalizedLaunchAt = new Date(timestamp).toISOString();
