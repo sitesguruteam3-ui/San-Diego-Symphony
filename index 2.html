@@ -170,7 +170,8 @@
     @keyframes site-image-in { from { opacity: 0; } to { opacity: 1; } }
     @keyframes site-content-in { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
     @media (prefers-reduced-motion: reduce) {
-      .cover-intro-image, .cover-intro-content, .cover-intro-action::after, .cover-loader::before, .topbar, .left-panel, .right-panel { animation: none !important; }
+      .cover-intro-image, .cover-intro-content, .cover-intro-action::after, .cover-loader::before, .topbar, .left-panel, .right-panel, .tier-tabpanel { animation: none !important; }
+      .tier-tab, .tier-tab-caret { transition: none !important; }
       .collage-photo, .collage-photo img { transition: none !important; }
       .cover-intro { transition: none; }
     }
@@ -705,6 +706,148 @@
     }
 
     /* Host a Table Tiers */
+    .tier-tabs {
+      margin-top: 24px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--paper);
+      overflow: hidden;
+      box-shadow: 0 14px 32px rgba(15, 23, 42, 0.07);
+    }
+    .tier-tabs-intro {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 20px 20px 14px;
+      background: var(--paper);
+    }
+    .tier-tabs-intro strong {
+      display: block;
+      color: var(--ink);
+      font-size: 0.92rem;
+      letter-spacing: -0.01em;
+    }
+    .tier-tabs-intro span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.45;
+    }
+    .tier-tabs-hint {
+      flex: 0 0 auto;
+      padding: 5px 9px;
+      border: 1px solid rgba(183, 121, 43, 0.28);
+      border-radius: 999px;
+      background: rgba(183, 121, 43, 0.08);
+      color: #76501d !important;
+      font-size: 0.66rem !important;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .tier-tablist {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      padding: 10px;
+      border-bottom: 1px solid var(--line);
+      background: var(--soft);
+    }
+    .tier-tablist.has-single-tab {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .tier-tab {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 13px 14px 13px 16px;
+      border: 1px solid #cbd5e1;
+      border-radius: 11px;
+      background: var(--paper);
+      color: var(--ink);
+      cursor: pointer;
+      font-family: inherit;
+      text-align: left;
+      transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease, box-shadow 200ms ease, transform 160ms ease;
+    }
+    .tier-tab:hover {
+      color: var(--ink);
+      border-color: #94a3b8;
+      background: #ffffff;
+      box-shadow: 0 7px 16px rgba(15, 23, 42, 0.08);
+      transform: translateY(-1px);
+    }
+    .tier-tab[aria-selected="true"] {
+      border-color: var(--gold);
+      background: linear-gradient(145deg, #ffffff 0%, #fffaf2 100%);
+      color: var(--ink);
+      box-shadow: 0 7px 18px rgba(183, 121, 43, 0.13), inset 0 -3px 0 var(--gold);
+    }
+    .tier-tab-copy {
+      min-width: 0;
+    }
+    .tier-tab-label {
+      display: block;
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.055em;
+      line-height: 1.25;
+      text-transform: uppercase;
+    }
+    .tier-tab-action {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 0.7rem;
+      font-weight: 650;
+      letter-spacing: 0;
+      line-height: 1.2;
+      text-transform: none;
+    }
+    .tier-tab-action-selected { display: none; color: #76501d; }
+    .tier-tab[aria-selected="true"] .tier-tab-action-default { display: none; }
+    .tier-tab[aria-selected="true"] .tier-tab-action-selected { display: block; }
+    .tier-tab-caret {
+      width: 34px;
+      height: 34px;
+      flex: 0 0 34px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--soft);
+      color: var(--muted);
+      transition: transform 200ms ease, background-color 200ms ease, border-color 200ms ease, color 200ms ease;
+    }
+    .tier-tab-caret svg { width: 16px; height: 16px; }
+    .tier-tab[aria-selected="true"] .tier-tab-caret {
+      border-color: rgba(183, 121, 43, 0.38);
+      background: rgba(183, 121, 43, 0.1);
+      color: #76501d;
+      transform: rotate(90deg);
+    }
+    .tier-tab[hidden] {
+      display: none;
+    }
+    .tier-tab:focus-visible {
+      outline: 3px solid rgba(15, 23, 42, 0.28);
+      outline-offset: 3px;
+    }
+    .tier-tabpanel {
+      padding: 4px 20px 20px;
+      animation: tier-panel-in 200ms ease-out;
+    }
+    .tier-tabpanel[hidden] {
+      display: none;
+    }
+    @keyframes tier-panel-in {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
     .tier-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -718,6 +861,23 @@
       background: var(--soft);
       display: flex;
       flex-direction: column;
+    }
+    .individual-ticket-link {
+      display: inline-block;
+      margin: 20px 0 0;
+      color: var(--ink);
+      font-size: 0.86rem;
+      font-weight: 700;
+      line-height: 1.5;
+      text-decoration: underline;
+      text-decoration-color: var(--gold);
+      text-decoration-thickness: 2px;
+      text-underline-offset: 4px;
+      transition: color 180ms ease, text-decoration-color 180ms ease;
+    }
+    .individual-ticket-link:hover {
+      color: var(--gold);
+      text-decoration-color: currentColor;
     }
     .tier-top h3 {
       font-size: 0.95rem;
@@ -851,6 +1011,12 @@
       margin: 16px 0 0;
       color: var(--muted);
       font-size: 0.82rem;
+    }
+    .availability-note {
+      padding-left: 12px;
+      border-left: 3px solid var(--gold);
+      color: var(--ink);
+      font-weight: 650;
     }
     .recognition-photo {
       margin: 20px 0 0;
@@ -1070,6 +1236,20 @@
       .accordion-inner {
         padding: 0 16px 16px;
       }
+      .tier-tablist {
+        grid-template-columns: 1fr;
+      }
+      .tier-tab {
+        width: 100%;
+      }
+      .tier-tabs-intro {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .tier-tabpanel {
+        padding: 4px 16px 16px;
+      }
     }
   </style>
 </head>
@@ -1200,16 +1380,23 @@
       <article class="section section-anchor" id="slide-3">
         <p class="kicker">Tables & Leadership</p>
         <h2>Host a Table/Ticket Levels</h2>
-        <div class="accordion-list">
-          <article class="accordion open">
-            <button class="accordion-toggle" type="button" aria-expanded="true">
-              <span class="accordion-title"><small>Sponsorship Levels</small></span>
-              <span class="accordion-meta">10 Guests <span class="chevron"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></span>
+        <section class="tier-tabs" aria-label="Gala ticket options">
+          <div class="tier-tabs-intro" id="tier-tabs-help">
+            <div><strong>Choose a ticket type</strong><span>Select an option below to view its levels and benefits.</span></div>
+            <span class="tier-tabs-hint">Interactive options</span>
+          </div>
+          <div class="tier-tablist has-single-tab" role="tablist" aria-label="Ticket level categories" aria-describedby="tier-tabs-help">
+            <button class="tier-tab" id="sponsorship-tab" type="button" role="tab" aria-selected="true" aria-controls="sponsorship-panel" tabindex="0">
+              <span class="tier-tab-copy"><span class="tier-tab-label">Sponsorship Levels</span><span class="tier-tab-action tier-tab-action-default">View options</span><span class="tier-tab-action tier-tab-action-selected">Selected — details below</span></span>
+              <span class="tier-tab-caret" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
             </button>
-            <div class="accordion-panel">
-              <div class="accordion-content">
-                <div class="accordion-inner">
-                  <div class="tier-grid">
+            <button class="tier-tab" id="individual-tab" type="button" role="tab" aria-selected="false" aria-controls="individual-panel" tabindex="-1" hidden>
+              <span class="tier-tab-copy"><span class="tier-tab-label">Individual Ticket Levels</span><span class="tier-tab-action tier-tab-action-default">View options</span><span class="tier-tab-action tier-tab-action-selected">Selected — details below</span></span>
+              <span class="tier-tab-caret" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
+            </button>
+          </div>
+          <div class="tier-tabpanel" id="sponsorship-panel" role="tabpanel" aria-labelledby="sponsorship-tab" tabindex="0">
+            <div class="tier-grid">
                     <article class="tier">
                       <div class="tier-top"><h3>Fortissimo Level</h3><div class="price">$50,000</div></div>
                       <ul class="benefits">
@@ -1241,22 +1428,13 @@
                         <li>Dinner and concert seating</li>
                       </ul>
                     </article>
-                  </div>
-                  <p class="note">Fair Market Value per table is $5,000 or $500 per person. Additional tables may be purchased and placed adjacently.</p>
-                  <p class="note">Contact Special Events at <a class="contact-link" href="mailto:Specialevents@sandiegosymphony.org">Specialevents@sandiegosymphony.org</a>.</p>
-                </div>
-              </div>
             </div>
-          </article>
-          <article class="accordion open">
-            <button class="accordion-toggle" type="button" aria-expanded="true">
-              <span class="accordion-title"><small>Individual Ticket Levels &amp; Benefits</small></span>
-              <span class="accordion-meta">Single Guest <span class="chevron"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></span>
-            </button>
-            <div class="accordion-panel">
-              <div class="accordion-content">
-                <div class="accordion-inner">
-                  <div class="tier-grid">
+            <p class="note">Fair Market Value per table is $5,000 or $500 per person. Additional tables may be purchased and placed adjacently.</p>
+            <p class="note availability-note" id="individual-purchase-note" hidden>Individual tickets will be available for purchase beginning August 12.</p>
+            <p class="note">Contact Special Events at <a class="contact-link" href="mailto:Specialevents@sandiegosymphony.org">Specialevents@sandiegosymphony.org</a>.</p>
+          </div>
+          <div class="tier-tabpanel" id="individual-panel" role="tabpanel" aria-labelledby="individual-tab" tabindex="0" hidden>
+            <div class="tier-grid">
                     <article class="tier">
                       <div class="tier-top"><h3>Fortissimo Level</h3><div class="price">$5,000</div></div>
                       <ul class="benefits">
@@ -1284,11 +1462,11 @@
                         <li>Dinner and concert seating</li>
                       </ul>
                     </article>
-                  </div>
-                </div>
-              </div>
             </div>
-          </article>
+            <a class="individual-ticket-link" href="https://purchasing.sandiegosymphony.org/10190/10191" target="_blank" rel="noopener noreferrer">Purchase Individual tickets now.</a>
+          </div>
+        </section>
+        <div class="accordion-list">
           <article class="accordion open">
             <button class="accordion-toggle" type="button" aria-expanded="true">
               <span class="accordion-title"><strong>Recognition</strong></span>
@@ -1307,7 +1485,7 @@
                     <li>Karen Foster Silberman and Jeff Silberman</li>
                     <li>Ross Caleca and Hayley Janecek</li>
                     <li>Sandra and Henny den Uijl</li>
-                    <li>George Guerra</li>
+                    <li>George C. Guerra</li>
                     <li>Robert A. Rubenstein, M.D. and Marie G. Raftery</li>
                     <li>Susan Tousi and Randy Camp</li>
                     <li>Lisa and Michael Witz</li>
@@ -1393,12 +1571,15 @@
     <a class="book-btn" href="https://purchasing.sandiegosymphony.org/10190/10191" target="_blank" rel="noopener noreferrer">Purchase Now</a>
   </div>
 
+  <script src="site-config.js"></script>
   <script>
     const navLinks = Array.from(document.querySelectorAll('.top-nav a, .drawer-nav a'));
     const anchors = Array.from(document.querySelectorAll('.section-anchor'));
     const drawer = document.querySelector('.drawer');
     const menuButton = document.querySelector('.menu-btn');
     const accordions = Array.from(document.querySelectorAll('.accordion'));
+    const tierTabs = Array.from(document.querySelectorAll('.tier-tab'));
+    const bookNowButtons = Array.from(document.querySelectorAll('.book-btn, .individual-ticket-link'));
     const slides = Array.from(document.querySelectorAll('.panel-slide'));
     const coverIntro = document.querySelector('.cover-intro');
     const coverIntroImage = document.querySelector('.cover-intro-image');
@@ -1487,6 +1668,111 @@
         toggle.setAttribute('aria-expanded', String(open));
       });
     });
+
+    function activateTierTab(tab, moveFocus = false) {
+      if (!tab) return;
+      tierTabs.forEach((item) => {
+        const selected = item === tab;
+        const panel = document.getElementById(item.getAttribute('aria-controls'));
+        item.setAttribute('aria-selected', String(selected));
+        item.tabIndex = selected ? 0 : -1;
+        if (panel) panel.hidden = !selected;
+      });
+      if (moveFocus) tab.focus();
+    }
+
+    // site-config.js is the resilient static fallback when the schedule API is unavailable.
+    function getIndividualTicketsLaunchAt() {
+      const timestamp = Date.parse(window.AMPLIFY_CONFIG?.individualTicketsLaunchAt);
+      if (Number.isFinite(timestamp)) return timestamp;
+      return Date.parse('2026-06-11T07:00:00Z');
+    }
+
+    let individualTicketsLaunchAt = getIndividualTicketsLaunchAt();
+    const individualTicketsTab = document.getElementById('individual-tab');
+    const individualPurchaseNote = document.getElementById('individual-purchase-note');
+    const tierTablist = document.querySelector('.tier-tablist');
+    let individualTicketsTimer = null;
+    let individualPurchaseNoteTimer = null;
+    const individualPurchaseOpensAt = Date.parse('2026-08-12T07:00:00Z');
+
+    function applyBookNowUrl(value) {
+      if (typeof value !== 'string' || !value.startsWith('https://')) return;
+      bookNowButtons.forEach((button) => button.href = value);
+    }
+
+    applyBookNowUrl(window.AMPLIFY_CONFIG?.bookNowUrl);
+
+    function updateIndividualPurchaseNote() {
+      if (!individualPurchaseNote) return;
+      if (individualPurchaseNoteTimer) window.clearTimeout(individualPurchaseNoteTimer);
+      const purchaseIsOpen = Date.now() >= individualPurchaseOpensAt;
+      individualPurchaseNote.hidden = purchaseIsOpen;
+      if (!purchaseIsOpen) {
+        individualPurchaseNoteTimer = window.setTimeout(
+          () => { individualPurchaseNote.hidden = true; },
+          individualPurchaseOpensAt - Date.now()
+        );
+      }
+    }
+
+    updateIndividualPurchaseNote();
+
+    function setIndividualTicketVisibility(isVisible) {
+      if (!individualTicketsTab) return;
+      individualTicketsTab.hidden = !isVisible;
+      tierTablist?.classList.toggle('has-single-tab', !isVisible);
+    }
+
+    function revealScheduledTicketTab() {
+      if (individualTicketsTimer) window.clearTimeout(individualTicketsTimer);
+      setIndividualTicketVisibility(Date.now() >= individualTicketsLaunchAt);
+      if (Date.now() >= individualTicketsLaunchAt) {
+        return;
+      }
+
+      individualTicketsTimer = window.setTimeout(
+        () => setIndividualTicketVisibility(true),
+        individualTicketsLaunchAt - Date.now()
+      );
+    }
+
+    async function loadPublishedTicketSchedule() {
+      try {
+        const response = await fetch('/.netlify/functions/ticket-schedule', {
+          headers: { accept: 'application/json' },
+          cache: 'no-store'
+        });
+        if (!response.ok) throw new Error(`Schedule request failed: ${response.status}`);
+        const data = await response.json();
+        const timestamp = Date.parse(data.individualTicketsLaunchAt);
+        if (!Number.isFinite(timestamp)) throw new Error('Schedule response is invalid.');
+        individualTicketsLaunchAt = timestamp;
+        applyBookNowUrl(data.bookNowUrl);
+        revealScheduledTicketTab();
+      } catch (error) {
+        console.warn('Using the static ticket schedule fallback.', error);
+        revealScheduledTicketTab();
+      }
+    }
+
+    tierTabs.forEach((tab) => {
+      tab.addEventListener('click', () => activateTierTab(tab));
+      tab.addEventListener('keydown', (event) => {
+        const availableTabs = tierTabs.filter((item) => !item.hidden);
+        const index = availableTabs.indexOf(tab);
+        let nextIndex = null;
+        if (event.key === 'ArrowRight') nextIndex = (index + 1) % availableTabs.length;
+        if (event.key === 'ArrowLeft') nextIndex = (index - 1 + availableTabs.length) % availableTabs.length;
+        if (event.key === 'Home') nextIndex = 0;
+        if (event.key === 'End') nextIndex = availableTabs.length - 1;
+        if (nextIndex === null) return;
+        event.preventDefault();
+        activateTierTab(availableTabs[nextIndex], true);
+      });
+    });
+
+    loadPublishedTicketSchedule();
 
     menuButton.addEventListener('click', () => {
       const open = !drawer.classList.contains('open');
